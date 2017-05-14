@@ -15,17 +15,20 @@ running = True
 print ('Game is running')
 
 
-
 #CONSTANTS
-TILE_PER_BOARD_COLUMN = 16
-TILE_WIDTH_SCREEN = 32
-TILE_HEIGH_SCREEN = 18
-TILE_SIZE = 60
+TILE_PER_BOARD_COLUMN = 16 #NEVER CHANGE
+
+TILE_SIZE = 60 #MUST DIVIDE BTH 1920 and 1080 / for instance 12; 15; 20; 24; 30; 40; 60 work
+
+TILE_WIDTH_SCREEN = 1920 / TILE_SIZE
+TILE_HEIGH_SCREEN = 1080 / TILE_SIZE
+
 
 FOOTER_WIDTH = TILE_PER_BOARD_COLUMN * TILE_SIZE
 FOOTER_HEIGH = ( TILE_HEIGH_SCREEN - TILE_PER_BOARD_COLUMN ) * TILE_SIZE
-MENU_WIDTH = TILE_PER_BOARD_COLUMN * TILE_SIZE
+MENU_WIDTH = ( TILE_WIDTH_SCREEN - TILE_PER_BOARD_COLUMN ) * TILE_SIZE
 MENU_HEIGH = TILE_HEIGH_SCREEN * TILE_SIZE
+
 
 
 #CHANGING WITH WINDOW RESIZING
@@ -89,8 +92,8 @@ def drawBoard() :
     window.blit(menu, (TILE_PER_BOARD_COLUMN*tile_size, 0))
     pygame.display.flip()
 
-def updateRatio(width) :
-    return float(width / 1920)
+def updateRatio(width, heigh) :
+    return min( float(width / 1920), float(heigh/1080) )
 
 #Resize tile
 def resizeTile() :
@@ -107,23 +110,34 @@ def updateFooterWidth() :
     return round(TILE_PER_BOARD_COLUMN * tile_size)
 
 def updateFooterHeigh() :
-    return round(2 * tile_size)
+    return round(( TILE_HEIGH_SCREEN - TILE_PER_BOARD_COLUMN ) * tile_size)
 
 #Resize menu
 def resizeMenu() :
     return pygame.transform.smoothscale(menu, (menu_width, menu_heigh) )
 
 def updateMenuWidth() :
-    return round(TILE_PER_BOARD_COLUMN * tile_size)
+    return round(( TILE_WIDTH_SCREEN - TILE_PER_BOARD_COLUMN ) * tile_size)
 
 def updateMenuHeigh() :
-    return round(18 * tile_size)
+    return round(TILE_HEIGH_SCREEN * tile_size)
 
 
 
 #WINDOW INITIALIZATION
 window = refreshWindow(window, cfg.WIDTH, cfg.HEIGH)
+
+tile_size = updateTileSize()
 tile = resizeTile()
+
+footer_width = updateMenuWidth()
+footer_heigh = updateFooterHeigh()
+footer = resizeFooter()
+
+menu_width = updateMenuWidth()
+menu_heigh = updateMenuHeigh()
+menu = resizeMenu()
+
 drawBoard()
 
 
@@ -146,7 +160,7 @@ while running:
             footer = pygame.image.load("./images/footer.png")
             menu = pygame.image.load("./images/menu.png") 
 
-            ratio = updateRatio(event.dict['size'][0])
+            ratio = updateRatio(event.dict['size'][0], event.dict['size'][1])
 
             tile_size = updateTileSize()
             tile = resizeTile()
