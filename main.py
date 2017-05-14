@@ -16,15 +16,15 @@ print ('Game is running')
 
 
 
-#CONSTANTS
-global BOARD_SIZE, TILE_SIZE
+#GLOBAL VARIABLES
+global BOARD_SIZE, TILE_SIZE, RATIO
 BOARD_SIZE = 16
 TILE_SIZE = 60
 
 #CHANGING WITH WINDOW RESIZING
+RATIO = float(cfg.WIDTH / 1920)
 window =  pygame.display.set_mode( (0, 0) )
-ratio = float(cfg.WIDTH / 1920)
-tile_size = round(TILE_SIZE * ratio)
+tile_size = round(TILE_SIZE * RATIO)
 
 
 
@@ -38,28 +38,6 @@ print('    Images loaded')
 
 
 #FUNCTIONS
-
-#Draw playing board
-def drawBoard(tile_size) :
-    x_pos = 0
-    y_pos = 0
-
-    for row in range(0,BOARD_SIZE) :
-        for column in range(0, BOARD_SIZE) :
-            window.blit(tile,(x_pos, y_pos))
-            x_pos += tile_size
-        x_pos = 0
-        y_pos += tile_size
-
-    #window.blit(footer, (0, 960))
-
-    pygame.display.flip()
-
-
-#Resize tiles
-def resizeTile(ratio) :
-    tile_size = round(60 * ratio)
-    return pygame.transform.smoothscale(tile, (tile_size, tile_size) )
 
 #Game window creation
 def refreshWindow(window, width, heigh) :
@@ -84,23 +62,38 @@ def refreshWindow(window, width, heigh) :
             window = pygame.display.set_mode( (width, heigh))
     return window
 
+#Draw playing board
+def drawBoard(tile_size) :
+    x_pos = 0
+    y_pos = 0
+
+    for row in range(0,BOARD_SIZE) :
+        for column in range(0, BOARD_SIZE) :
+            window.blit(tile,(x_pos, y_pos))
+            x_pos += tile_size
+        x_pos = 0
+        y_pos += tile_size
+
+    #window.blit(footer, (0, 960))
+    pygame.display.flip()
 
 def updateRatio(width) :
     return float(width / 1920)
 
-def updateTileSize(width) :
-    return round(TILE_SIZE * ratio)
+#Resize tiles
+def resizeTile() :
+    tile_size = round(TILE_SIZE * RATIO)
+    return pygame.transform.smoothscale(tile, (tile_size, tile_size) )
 
-def updateSize() :
-    ratio = updateRatio(event.dict['size'][0])
+def updateTileSize() :
+    return round(TILE_SIZE * RATIO)
 
-    tile_size = updateTileSize(event.dict['size'][0])
-    tile = resizeTile(event.dict['size'][0])
+
 
 
 #WINDOW INITIALIZATION
 window = refreshWindow(window, cfg.WIDTH, cfg.HEIGH)
-tile = resizeTile(ratio)
+tile = resizeTile()
 drawBoard(tile_size)
 
 
@@ -121,9 +114,10 @@ while running:
             window = refreshWindow(window, event.dict['size'][0], event.dict['size'][1])
             tile = pygame.image.load("./images/tile.png") #to regain quality 
 
-            ratio = updateRatio(event.dict['size'][0])
-            tile_size = updateTileSize(event.dict['size'][0])
-            tile = resizeTile(ratio)
+            RATIO = updateRatio(event.dict['size'][0])
+
+            tile_size = updateTileSize()
+            tile = resizeTile()
 
             drawBoard(tile_size)
 
