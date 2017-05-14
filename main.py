@@ -16,15 +16,25 @@ print ('Game is running')
 
 
 
-#GLOBAL VARIABLES
-global BOARD_SIZE, TILE_SIZE, RATIO
-BOARD_SIZE = 16
+#CONSTANTS
+TILE_PER_BOARD_COLUMN = 16
+TILE_WIDTH_SCREEN = 32
+TILE_HEIGH_SCREEN = 18
 TILE_SIZE = 60
+FOOTER_WIDTH = TILE_WIDTH_SCREEN * TILE_SIZE
+FOOTER_HEIGH = ( TILE_HEIGH_SCREEN - TILE_PER_BOARD_COLUMN ) * TILE_SIZE
+MENU_WIDTH = 960
+MENU_HEIGH = 1080
+
 
 #CHANGING WITH WINDOW RESIZING
-RATIO = float(cfg.WIDTH / 1920)
+ratio = float(cfg.WIDTH / 1920) #reference resolution is 1920*1080
 window =  pygame.display.set_mode( (0, 0) )
-tile_size = round(TILE_SIZE * RATIO)
+tile_size = round(TILE_SIZE * ratio)
+footer_width = round(FOOTER_WIDTH * ratio)
+footer_heigh = round(FOOTER_HEIGH * ratio)
+menu_width = round(MENU_WIDTH * ratio)
+menu_heigh = round(MENU_HEIGH * ratio)
 
 
 
@@ -63,38 +73,57 @@ def refreshWindow(window, width, heigh) :
     return window
 
 #Draw playing board
-def drawBoard(tile_size) :
+def drawBoard() :
     x_pos = 0
     y_pos = 0
 
-    for row in range(0,BOARD_SIZE) :
-        for column in range(0, BOARD_SIZE) :
+    for row in range(0,TILE_PER_BOARD_COLUMN) :
+        for column in range(0, TILE_PER_BOARD_COLUMN) :
             window.blit(tile,(x_pos, y_pos))
             x_pos += tile_size
         x_pos = 0
         y_pos += tile_size
 
-    #window.blit(footer, (0, 960))
+    window.blit(footer, (0, TILE_PER_BOARD_COLUMN*tile_size))
+    window.blit(menu, (TILE_PER_BOARD_COLUMN*tile_size, 0))
     pygame.display.flip()
 
 def updateRatio(width) :
     return float(width / 1920)
 
-#Resize tiles
+#Resize tile
 def resizeTile() :
-    tile_size = round(TILE_SIZE * RATIO)
     return pygame.transform.smoothscale(tile, (tile_size, tile_size) )
 
 def updateTileSize() :
-    return round(TILE_SIZE * RATIO)
+    return round(TILE_SIZE * ratio) #TO IMPROVE, Based on tile size
 
+#Resize footer
+def resizeFooter() :
+    return pygame.transform.smoothscale(footer, (footer_width, footer_heigh) )
+
+def updateFooterWidth() :
+    return round(TILE_PER_BOARD_COLUMN * tile_size)
+
+def updateFooterHeigh() :
+    return round(2 * tile_size)
+
+#Resize menu
+def resizeMenu() :
+    return pygame.transform.smoothscale(menu, (menu_width, menu_heigh) )
+
+def updateMenuWidth() :
+    return round(TILE_PER_BOARD_COLUMN * tile_size)
+
+def updateMenuHeigh() :
+    return round(18 * tile_size)
 
 
 
 #WINDOW INITIALIZATION
 window = refreshWindow(window, cfg.WIDTH, cfg.HEIGH)
 tile = resizeTile()
-drawBoard(tile_size)
+drawBoard()
 
 
 
@@ -112,14 +141,24 @@ while running:
 
         elif (cfg.FULLSCREEN == False and cfg.RESIZABLE == True and event.type == VIDEORESIZE) :
             window = refreshWindow(window, event.dict['size'][0], event.dict['size'][1])
-            tile = pygame.image.load("./images/tile.png") #to regain quality 
+            tile = pygame.image.load("./images/tile.png") #to regain quality
+            footer = pygame.image.load("./images/footer.png")
+            menu = pygame.image.load("./images/menu.png") 
 
-            RATIO = updateRatio(event.dict['size'][0])
+            ratio = updateRatio(event.dict['size'][0])
 
             tile_size = updateTileSize()
             tile = resizeTile()
 
-            drawBoard(tile_size)
+            footer_width = updateMenuWidth()
+            footer_heigh = updateFooterHeigh()
+            footer = resizeFooter()
+
+            menu_width = updateMenuWidth()
+            menu_heigh = updateMenuHeigh()
+            menu = resizeMenu()
+
+            drawBoard()
 
 
 print('    Shutting down ...')
