@@ -45,7 +45,7 @@ menu_heigh = round(MENU_HEIGH * ratio)
 #IMAGES LOADING
 print ('    Loading images...')
 tile = pygame.image.load("./images/tile.png") # TODO change path for Linux ?
-footer = pygame.image.load("./images/footer.png")
+footer = pygame.image.load("./images/footer_textured.png")
 menu = pygame.image.load("./images/menu.png")
 print('    Images loaded')
 
@@ -157,7 +157,7 @@ while running:
         elif (cfg.FULLSCREEN == False and cfg.RESIZABLE == True and event.type == VIDEORESIZE) :
             window = refreshWindow(window, event.dict['size'][0], event.dict['size'][1])
             tile = pygame.image.load("./images/tile.png") #to regain quality
-            footer = pygame.image.load("./images/footer.png")
+            footer = pygame.image.load("./images/footer_textured.png")
             menu = pygame.image.load("./images/menu.png") 
 
             ratio = updateRatio(event.dict['size'][0], event.dict['size'][1])

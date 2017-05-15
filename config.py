@@ -2,9 +2,9 @@
 #change values bellow to change game configuration (avoid doing this at runtime)
 
 #BASIC OPTIONS
-FULLSCREEN = False #enable Fullscreen mode or not
+FULLSCREEN = True #enable Fullscreen mode or not
 
-HEIGH = 720 #heigh resolution of the window #COMMON VALUES 1080 or 720
+HEIGH = 1080 #heigh resolution of the window #COMMON VALUES 1080 or 720
 WIDTH = round (HEIGH * (16/9) ) #width resolution of the window
 
 #ADVANCED OPTIONS
