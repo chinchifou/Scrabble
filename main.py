@@ -16,7 +16,7 @@ print ('Game is running')
 
 
 #CONSTANTS
-TILE_PER_BOARD_COLUMN = 16 #NEVER CHANGE
+TILE_PER_BOARD_COLUMN = 15 #NEVER CHANGE
 
 TILE_SIZE = 60 #MUST DIVIDE BTH 1920 and 1080 / for instance 12; 15; 20; 24; 30; 40; 60 work
 
@@ -28,6 +28,30 @@ FOOTER_WIDTH = TILE_PER_BOARD_COLUMN * TILE_SIZE
 FOOTER_HEIGH = ( TILE_HEIGH_SCREEN - TILE_PER_BOARD_COLUMN ) * TILE_SIZE
 MENU_WIDTH = ( TILE_WIDTH_SCREEN - TILE_PER_BOARD_COLUMN ) * TILE_SIZE
 MENU_HEIGH = TILE_HEIGH_SCREEN * TILE_SIZE
+
+# 0 : start
+# 1 : normal tile
+# 2 : double letter
+# 3 : triple letter
+# 4 : double word
+# 5 : triple word
+LAYOUT = [
+[5,1,1,2,1,1,1,5,1,1,1,2,1,1,5],
+[1,4,1,1,1,3,1,1,1,3,1,1,1,4,1],
+[1,1,4,1,1,1,2,1,2,1,1,1,4,1,1],
+[2,1,1,4,1,1,1,2,1,1,1,4,1,1,2],
+[1,1,1,1,4,1,1,1,1,1,4,1,1,1,1],
+[1,3,1,1,1,3,1,1,1,3,1,1,1,3,1],
+[1,1,2,1,1,1,2,1,2,1,1,1,2,1,1],
+[5,1,1,2,1,1,1,0,1,1,1,2,1,1,5],
+[1,1,2,1,1,1,2,1,2,1,1,1,2,1,1],
+[1,3,1,1,1,3,1,1,1,3,1,1,1,3,1],
+[1,1,1,1,4,1,1,1,1,1,4,1,1,1,1],
+[2,1,1,4,1,1,1,2,1,1,1,4,1,1,2],
+[1,1,4,1,1,1,2,1,2,1,1,1,4,1,1],
+[1,4,1,1,1,3,1,1,1,3,1,1,1,4,1],
+[5,1,1,2,1,1,1,5,1,1,1,2,1,1,5]
+]
 
 
 
@@ -45,6 +69,15 @@ menu_heigh = round(MENU_HEIGH * ratio)
 #IMAGES LOADING
 print ('    Loading images...')
 tile = pygame.image.load("./images/tile.png") # TODO change path for Linux ?
+
+tile_double_letter = pygame.image.load("./images/tile_double_letter.png")
+tile_triple_letter = pygame.image.load("./images/tile_triple_letter.png")
+
+tile_double_word = pygame.image.load("./images/tile_double_word.png")
+tile_triple_word = pygame.image.load("./images/tile_triple_word.png")
+
+tile_start = pygame.image.load("./images/tile_start.png")
+
 footer = pygame.image.load("./images/footer_textured.png")
 menu = pygame.image.load("./images/menu.png")
 print('    Images loaded')
@@ -83,7 +116,18 @@ def drawBoard() :
 
     for row in range(0,TILE_PER_BOARD_COLUMN) :
         for column in range(0, TILE_PER_BOARD_COLUMN) :
-            window.blit(tile,(x_pos, y_pos))
+            if LAYOUT[row][column] == 0 :
+                window.blit(tile_start,(x_pos, y_pos))
+            elif LAYOUT[row][column] == 1 :
+                window.blit(tile,(x_pos, y_pos))
+            elif LAYOUT[row][column] == 2 :
+                window.blit(tile_double_letter,(x_pos, y_pos))
+            elif LAYOUT[row][column] == 3 :
+                window.blit(tile_triple_letter,(x_pos, y_pos))
+            elif LAYOUT[row][column] == 4 :
+                window.blit(tile_double_word,(x_pos, y_pos))
+            elif LAYOUT[row][column] == 5 :
+                window.blit(tile_triple_word,(x_pos, y_pos))
             x_pos += tile_size
         x_pos = 0
         y_pos += tile_size
@@ -95,32 +139,38 @@ def drawBoard() :
 def updateRatio(width, heigh) :
     return min( float(width / 1920), float(heigh/1080) )
 
-#Resize tile
-def resizeTile() :
-    return pygame.transform.smoothscale(tile, (tile_size, tile_size) )
-
+#Resize tile    
 def updateTileSize() :
     return round(TILE_SIZE * ratio) #TO IMPROVE, Based on tile size
+def resizeTile() :
+    return pygame.transform.smoothscale(tile, (tile_size, tile_size) )
+def resizeTileDoubleLetter() :
+    return pygame.transform.smoothscale(tile_double_letter, (tile_size, tile_size) )
+def resizeTileTripleLetter() :
+    return pygame.transform.smoothscale(tile_triple_letter, (tile_size, tile_size) )    
+def resizeTileDoubleWord() :
+    return pygame.transform.smoothscale(tile_double_word, (tile_size, tile_size) )
+def resizeTileTripleWord() :
+    return pygame.transform.smoothscale(tile_triple_word, (tile_size, tile_size) )
+def resizeTileStart() :
+    return pygame.transform.smoothscale(tile_start, (tile_size, tile_size) )    
 
 #Resize footer
+def updateFooterWidth() :
+    return round(TILE_PER_BOARD_COLUMN * tile_size)
+def updateFooterHeigh() :
+    return round(( TILE_HEIGH_SCREEN - TILE_PER_BOARD_COLUMN ) * tile_size)
 def resizeFooter() :
     return pygame.transform.smoothscale(footer, (footer_width, footer_heigh) )
 
-def updateFooterWidth() :
-    return round(TILE_PER_BOARD_COLUMN * tile_size)
-
-def updateFooterHeigh() :
-    return round(( TILE_HEIGH_SCREEN - TILE_PER_BOARD_COLUMN ) * tile_size)
-
 #Resize menu
+def updateMenuWidth() :
+    return round(( TILE_WIDTH_SCREEN - TILE_PER_BOARD_COLUMN ) * tile_size)
+def updateMenuHeigh() :
+    return round(TILE_HEIGH_SCREEN * tile_size)
 def resizeMenu() :
     return pygame.transform.smoothscale(menu, (menu_width, menu_heigh) )
 
-def updateMenuWidth() :
-    return round(( TILE_WIDTH_SCREEN - TILE_PER_BOARD_COLUMN ) * tile_size)
-
-def updateMenuHeigh() :
-    return round(TILE_HEIGH_SCREEN * tile_size)
 
 
 
@@ -157,6 +207,11 @@ while running:
         elif (cfg.FULLSCREEN == False and cfg.RESIZABLE == True and event.type == VIDEORESIZE) :
             window = refreshWindow(window, event.dict['size'][0], event.dict['size'][1])
             tile = pygame.image.load("./images/tile.png") #to regain quality
+            tile_double_letter = pygame.image.load("./images/tile_double_letter.png")
+            tile_triple_letter = pygame.image.load("./images/tile_triple_letter.png")
+            tile_double_word = pygame.image.load("./images/tile_double_word.png")
+            tile_triple_word = pygame.image.load("./images/tile_triple_word.png")
+            tile_start = pygame.image.load("./images/tile_start.png")
             footer = pygame.image.load("./images/footer_textured.png")
             menu = pygame.image.load("./images/menu.png") 
 
@@ -164,6 +219,11 @@ while running:
 
             tile_size = updateTileSize()
             tile = resizeTile()
+            tile_double_letter = resizeTileDoubleLetter()
+            tile_triple_letter = resizeTileTripleLetter()
+            tile_double_word = resizeTileDoubleWord()
+            tile_triple_word = resizeTileTripleWord()
+            tile_start = resizeTileStart()
 
             footer_width = updateMenuWidth()
             footer_heigh = updateFooterHeigh()
