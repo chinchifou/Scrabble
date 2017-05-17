@@ -18,6 +18,11 @@ pygame.init()
 running = True
 print ('Game is running')
 
+if RESOLUTION_AUTO :
+    monitor_resolution = pygame.display.Info()
+    settings.WIDTH = monitor_resolution.current_w
+    settings.HEIGH = monitor_resolution.current_h
+    print('Resolution set to : ', settings.WIDTH, ' * ', settings.HEIGH)
 
 #CONSTANTS
 TILE_PER_BOARD_COLUMN = 15 #NEVER CHANGE
@@ -43,7 +48,6 @@ delta = 1.5 * tile_size #distance of board from top left corner
 board_size = round(BOARD_SIZE_IN_TILES * tile_size)
 menu_width = round(MENU_WIDTH_IN_TILES * tile_size)
 menu_heigh = round(MENU_HEIGH_IN_TILES * tile_size)
-
 
 
 #CHANGING DURING THE GAME
@@ -165,21 +169,7 @@ def resizeMenu() :
 
 
 #WINDOW INITIALIZATION
-window = refreshWindow(window, settings.WIDTH, settings.HEIGH)
-
-tile_size = updateTileSize()
-delta = updateDelta()
-tile = resizeTile()
-
-board_size = updateBoardSize()
-board = resizeBoard()
-
-menu_width = updateMenuWidth()
-menu_heigh = updateMenuHeigh()
-menu = resizeMenu()
-
-drawAll()
-
+window = refreshWindow(window, settings.WIDTH, settings.HEIGH) #call "event.type == VIDEORESIZE"
 
 
 
@@ -195,7 +185,7 @@ while running:
                 running = False #exit the game
 
 
-        elif (settings.FULLSCREEN == False and settings.RESIZABLE == True and event.type == VIDEORESIZE) :
+        elif (event.type == VIDEORESIZE) :
             window = refreshWindow(window, event.dict['size'][0], event.dict['size'][1])
             tile_start = pygame.image.load("./images/tile_start.png")
             tile = pygame.image.load("./images/tile.png") #to regain quality
@@ -229,6 +219,7 @@ while running:
 
 
 
+
 print('    Shutting down ...')
 pygame.quit() #exit if running == false
 print('Game is closed')
@@ -245,4 +236,10 @@ keys = pygame.key.get_pressed()
 
 if keys[K_LEFT]:
     self.char_x += 10
+
+
+font = pygame.font.Font("./images/Futura-BoldRegular.ttf", 60)
+test_letter = font.render('A',1,(0,0,0))
+window.blit(test_letter,(1.5*tile_size, 1.5*tile_size))
+pygame.display.flip()
 """
