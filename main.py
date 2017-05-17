@@ -2,8 +2,11 @@
 import pygame
 from pygame.locals import *
 
-import config as cfg
-from config import *
+import display_settings as settings
+from display_settings import *
+
+import game_rules as rules
+from game_rules import *
 
 from math import floor
 
@@ -19,7 +22,8 @@ print ('Game is running')
 #CONSTANTS
 TILE_PER_BOARD_COLUMN = 15 #NEVER CHANGE
 
-TILE_SIZE = 60 #MUST DIVIDE BTH 1920 and 1080 / for instance 12; 15; 20; 24; 30; 40; 60 work
+#TO DO -> TO IMPROVE, not only for 40
+TILE_SIZE = 60 #MUST DIVIDE BOTH 1920 and 1080 / for instance 12; 15; 20; 24; 30; 40; 60 work
 
 WIDTH_SCREEN_IN_TILES = 1920 / TILE_SIZE
 HEIGH_SCREEN_IN_TILES = 1080 / TILE_SIZE
@@ -29,40 +33,21 @@ BOARD_SIZE_IN_TILES = 18
 MENU_WIDTH_IN_TILES = WIDTH_SCREEN_IN_TILES - BOARD_SIZE_IN_TILES
 MENU_HEIGH_IN_TILES = HEIGH_SCREEN_IN_TILES
 
-# 0 : start
-# 1 : normal tile
-# 2 : double letter
-# 3 : triple letter
-# 4 : double word
-# 5 : triple word
-LAYOUT = [
-[5,1,1,2,1,1,1,5,1,1,1,2,1,1,5],
-[1,4,1,1,1,3,1,1,1,3,1,1,1,4,1],
-[1,1,4,1,1,1,2,1,2,1,1,1,4,1,1],
-[2,1,1,4,1,1,1,2,1,1,1,4,1,1,2],
-[1,1,1,1,4,1,1,1,1,1,4,1,1,1,1],
-[1,3,1,1,1,3,1,1,1,3,1,1,1,3,1],
-[1,1,2,1,1,1,2,1,2,1,1,1,2,1,1],
-[5,1,1,2,1,1,1,0,1,1,1,2,1,1,5],
-[1,1,2,1,1,1,2,1,2,1,1,1,2,1,1],
-[1,3,1,1,1,3,1,1,1,3,1,1,1,3,1],
-[1,1,1,1,4,1,1,1,1,1,4,1,1,1,1],
-[2,1,1,4,1,1,1,2,1,1,1,4,1,1,2],
-[1,1,4,1,1,1,2,1,2,1,1,1,4,1,1],
-[1,4,1,1,1,3,1,1,1,3,1,1,1,4,1],
-[5,1,1,2,1,1,1,5,1,1,1,2,1,1,5]
-]
-
 
 
 #CHANGING WITH WINDOW RESIZING
-ratio = float(cfg.WIDTH / 1920) #reference resolution is 1920*1080
+ratio = float(settings.WIDTH / 1920.0) #reference resolution is 1920*1080
 delta = 1.5 * TILE_SIZE #distance of board from top left corner
 window =  pygame.display.set_mode( (0, 0) )
 tile_size = round(TILE_SIZE * ratio)
 board_size = round(BOARD_SIZE_IN_TILES * tile_size)
 menu_width = round(MENU_WIDTH_IN_TILES * tile_size)
 menu_heigh = round(MENU_HEIGH_IN_TILES * tile_size)
+
+
+
+#CHANGING DURING THE GAME
+board_state = [ ['?' for i in range(TILE_PER_BOARD_COLUMN)] for j in range(TILE_PER_BOARD_COLUMN) ]
 
 
 
@@ -91,18 +76,18 @@ print('    Images loaded')
 
 #Game window creation
 def refreshWindow(window, width, heigh) :
-    if cfg.FULLSCREEN :
-        if cfg.DOUBLEBUF :
-            if cfg.HWSURFACE :
+    if settings.FULLSCREEN :
+        if settings.DOUBLEBUF :
+            if settings.HWSURFACE :
                 window = pygame.display.set_mode( (width, heigh), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
             else :
                 window = pygame.display.set_mode( (width, heigh), pygame.FULLSCREEN | pygame.DOUBLEBUF)
         else:
             window = pygame.display.set_mode( (width, heigh), pygame.FULLSCREEN)
     else :
-        if cfg.RESIZABLE :
-            if cfg.DOUBLEBUF :
-                if cfg.HWSURFACE :
+        if settings.RESIZABLE :
+            if settings.DOUBLEBUF :
+                if settings.HWSURFACE :
                     window = pygame.display.set_mode( (width, heigh), pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE)
                 else :
                     window = pygame.display.set_mode( (width, heigh), pygame.RESIZABLE | pygame.DOUBLEBUF)
@@ -113,7 +98,7 @@ def refreshWindow(window, width, heigh) :
     return window
 
 #Draw playing board
-def drawBoard() :
+def drawAll() :
     x_pos = 0 + delta
     y_pos = 0 + delta
 
@@ -180,7 +165,7 @@ def resizeMenu() :
 
 
 #WINDOW INITIALIZATION
-window = refreshWindow(window, cfg.WIDTH, cfg.HEIGH)
+window = refreshWindow(window, settings.WIDTH, settings.HEIGH)
 
 tile_size = updateTileSize()
 delta = updateDelta()
@@ -193,7 +178,7 @@ menu_width = updateMenuWidth()
 menu_heigh = updateMenuHeigh()
 menu = resizeMenu()
 
-drawBoard()
+drawAll()
 
 
 
@@ -209,7 +194,7 @@ while running:
                 running = False #exit the game
 
 
-        elif (cfg.FULLSCREEN == False and cfg.RESIZABLE == True and event.type == VIDEORESIZE) :
+        elif (settings.FULLSCREEN == False and settings.RESIZABLE == True and event.type == VIDEORESIZE) :
             window = refreshWindow(window, event.dict['size'][0], event.dict['size'][1])
             tile_start = pygame.image.load("./images/tile_start.png")
             tile = pygame.image.load("./images/tile.png") #to regain quality
@@ -239,7 +224,7 @@ while running:
             menu_heigh = updateMenuHeigh()
             menu = resizeMenu()
 
-            drawBoard()
+            drawAll()
 
 
 print('    Shutting down ...')
