@@ -68,7 +68,7 @@ french.append('Z')
 DICTIONARY = french
 
 #POINTS
-POINTS = {
+french_points = {
 '*': 0,
 'A' : 1,
 'B' : 3,
@@ -97,3 +97,6 @@ POINTS = {
 'Y' : 10,
 'Z' : 10
 }
+
+#CHHOOSE RULE FOR POINTS
+POINTS = french_points

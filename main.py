@@ -22,11 +22,11 @@ print ('Game is running')
 #CONSTANTS
 TILE_PER_BOARD_COLUMN = 15 #NEVER CHANGE
 
-#TO DO -> TO IMPROVE, not only for 40
+# ! better experience if TILE_SIZE is set to 60 pixels, black stripes otherwise !
 TILE_SIZE = 60 #MUST DIVIDE BOTH 1920 and 1080 / for instance 12; 15; 20; 24; 30; 40; 60 work
 
-WIDTH_SCREEN_IN_TILES = 1920 / TILE_SIZE
-HEIGH_SCREEN_IN_TILES = 1080 / TILE_SIZE
+WIDTH_SCREEN_IN_TILES = 1920 / 60
+HEIGH_SCREEN_IN_TILES = 1080 / 60
 
 BOARD_SIZE_IN_TILES = 18
 
@@ -34,12 +34,12 @@ MENU_WIDTH_IN_TILES = WIDTH_SCREEN_IN_TILES - BOARD_SIZE_IN_TILES
 MENU_HEIGH_IN_TILES = HEIGH_SCREEN_IN_TILES
 
 
-
 #CHANGING WITH WINDOW RESIZING
 ratio = float(settings.WIDTH / 1920.0) #reference resolution is 1920*1080
-delta = 1.5 * TILE_SIZE #distance of board from top left corner
 window =  pygame.display.set_mode( (0, 0) )
+
 tile_size = round(TILE_SIZE * ratio)
+delta = 1.5 * tile_size #distance of board from top left corner
 board_size = round(BOARD_SIZE_IN_TILES * tile_size)
 menu_width = round(MENU_WIDTH_IN_TILES * tile_size)
 menu_heigh = round(MENU_HEIGH_IN_TILES * tile_size)
@@ -150,15 +150,15 @@ def resizeTileStart() :
 
 #Resize board
 def updateBoardSize() :
-    return round( HEIGH_SCREEN_IN_TILES  * tile_size )
+    return round( BOARD_SIZE_IN_TILES  * tile_size )
 def resizeBoard() :
     return pygame.transform.smoothscale(board, (board_size, board_size) )
 
 #Resize menu
 def updateMenuWidth() :
-    return round( ( WIDTH_SCREEN_IN_TILES - BOARD_SIZE_IN_TILES  ) * tile_size)
+    return round( MENU_WIDTH_IN_TILES * tile_size)
 def updateMenuHeigh() :
-    return round(HEIGH_SCREEN_IN_TILES * tile_size)
+    return round( MENU_HEIGH_IN_TILES * tile_size)
 def resizeMenu() :
     return pygame.transform.smoothscale(menu, (menu_width, menu_heigh) )
 
@@ -179,6 +179,7 @@ menu_heigh = updateMenuHeigh()
 menu = resizeMenu()
 
 drawAll()
+
 
 
 
@@ -225,6 +226,7 @@ while running:
             menu = resizeMenu()
 
             drawAll()
+
 
 
 print('    Shutting down ...')
