@@ -1,73 +1,124 @@
 #CONFIGURATION FILE
 #GAME RULE
 
-#LAYOUT OF THE BONUSES ON THE BOARD
-# 0 : start
-# 1 : normal tile
-# 2 : double letter
-# 3 : triple letter
-# 4 : double word
-# 5 : triple word
-LAYOUT = [
-[5,1,1,2,1,1,1,5,1,1,1,2,1,1,5],
-[1,4,1,1,1,3,1,1,1,3,1,1,1,4,1],
-[1,1,4,1,1,1,2,1,2,1,1,1,4,1,1],
-[2,1,1,4,1,1,1,2,1,1,1,4,1,1,2],
-[1,1,1,1,4,1,1,1,1,1,4,1,1,1,1],
-[1,3,1,1,1,3,1,1,1,3,1,1,1,3,1],
-[1,1,2,1,1,1,2,1,2,1,1,1,2,1,1],
-[5,1,1,2,1,1,1,0,1,1,1,2,1,1,5],
-[1,1,2,1,1,1,2,1,2,1,1,1,2,1,1],
-[1,3,1,1,1,3,1,1,1,3,1,1,1,3,1],
-[1,1,1,1,4,1,1,1,1,1,4,1,1,1,1],
-[2,1,1,4,1,1,1,2,1,1,1,4,1,1,2],
-[1,1,4,1,1,1,2,1,2,1,1,1,4,1,1],
-[1,4,1,1,1,3,1,1,1,3,1,1,1,4,1],
-[5,1,1,2,1,1,1,5,1,1,1,2,1,1,5]
-]
+#___BASIC OPTION___
+
+LANGUAGE = 'french' #choose your language set among 'french' or 'english' ('english' if non given)
+
+
+
+#___ADVANCED OPTIONS___
 
 #DICTIONARIES
-#FRENCH
-french = [] #total length must be 102
+#TODO ADD PROPER ENGLISH DICTIONARY
+#ENGLISH
+english_letters = [] #total length must be 102
 for i in range(15):
-	french.append('E')
+	english_letters.append('E')
 for i in range(9):
-	french.append('A')
+	english_letters.append('A')
 for i in range(8):
-	french.append('I')
+	english_letters.append('I')
 for i in range(6):
-	french.append('N')
-	french.append('O')
-	french.append('R')
-	french.append('S')
-	french.append('T')
-	french.append('U')
+	english_letters.append('N')
+	english_letters.append('O')
+	english_letters.append('R')
+	english_letters.append('S')
+	english_letters.append('T')
+	english_letters.append('U')
 for i in range(5):
-	french.append('L')
+	english_letters.append('L')
 for i in range(3):
-	french.append('D')
-	french.append('M')
+	english_letters.append('D')
+	english_letters.append('M')
 for i in range(2):
-	french.append('G')
-	french.append('B')
-	french.append('C')
-	french.append('P')
-	french.append('F')
-	french.append('H')
-	french.append('V')
-	french.append('*')
-french.append('J')
-french.append('Q')
-french.append('K')
-french.append('W')
-french.append('X')
-french.append('Y')
-french.append('Z')
+	english_letters.append('G')
+	english_letters.append('B')
+	english_letters.append('C')
+	english_letters.append('P')
+	english_letters.append('F')
+	english_letters.append('H')
+	english_letters.append('V')
+	english_letters.append('*')
+english_letters.append('J')
+english_letters.append('Q')
+english_letters.append('K')
+english_letters.append('W')
+english_letters.append('X')
+english_letters.append('Y')
+english_letters.append('Z')
 
-#choose current dictionary
-DICTIONARY = french
+#FRENCH
+french_letters = [] #total length must be 102
+for i in range(15):
+	french_letters.append('E')
+for i in range(9):
+	french_letters.append('A')
+for i in range(8):
+	french_letters.append('I')
+for i in range(6):
+	french_letters.append('N')
+	french_letters.append('O')
+	french_letters.append('R')
+	french_letters.append('S')
+	french_letters.append('T')
+	french_letters.append('U')
+for i in range(5):
+	french_letters.append('L')
+for i in range(3):
+	french_letters.append('D')
+	french_letters.append('M')
+for i in range(2):
+	french_letters.append('G')
+	french_letters.append('B')
+	french_letters.append('C')
+	french_letters.append('P')
+	french_letters.append('F')
+	french_letters.append('H')
+	french_letters.append('V')
+	french_letters.append('*')
+french_letters.append('J')
+french_letters.append('Q')
+french_letters.append('K')
+french_letters.append('W')
+french_letters.append('X')
+french_letters.append('Y')
+french_letters.append('Z')
+
 
 #POINTS
+#ENGLISH
+english_points = {
+'*': 0,
+'A' : 1,
+'B' : 3,
+'C' : 3,
+'D' : 2,
+'E' : 1,
+'F' : 4,
+'G' : 2,
+'H' : 4,
+'I' : 1,
+'J' : 8,
+'K' : 5,
+'L' : 1,
+'M' : 3,
+'N' : 1,
+'O' : 1,
+'P' : 3,
+'Q' : 10,
+'R' : 1,
+'S' : 1,
+'T' : 1,
+'U' : 1,
+'V' : 4,
+'W' : 4,
+'X' : 8,
+'Y' : 4,
+'Z' : 10
+}
+
+#FRENCH
 french_points = {
 '*': 0,
 'A' : 1,
@@ -98,5 +149,43 @@ french_points = {
 'Z' : 10
 }
 
-#CHHOOSE RULE FOR POINTS
-POINTS = french_points
+#LAYOUT OF THE BONUSES ON THE BOARD
+# 0 : start
+# 1 : normal tile
+# 2 : double letter
+# 3 : triple letter
+# 4 : double word
+# 5 : triple word
+LAYOUT = [
+[5,1,1,2,1,1,1,5,1,1,1,2,1,1,5],
+[1,4,1,1,1,3,1,1,1,3,1,1,1,4,1],
+[1,1,4,1,1,1,2,1,2,1,1,1,4,1,1],
+[2,1,1,4,1,1,1,2,1,1,1,4,1,1,2],
+[1,1,1,1,4,1,1,1,1,1,4,1,1,1,1],
+[1,3,1,1,1,3,1,1,1,3,1,1,1,3,1],
+[1,1,2,1,1,1,2,1,2,1,1,1,2,1,1],
+[5,1,1,2,1,1,1,0,1,1,1,2,1,1,5],
+[1,1,2,1,1,1,2,1,2,1,1,1,2,1,1],
+[1,3,1,1,1,3,1,1,1,3,1,1,1,3,1],
+[1,1,1,1,4,1,1,1,1,1,4,1,1,1,1],
+[2,1,1,4,1,1,1,2,1,1,1,4,1,1,2],
+[1,1,4,1,1,1,2,1,2,1,1,1,4,1,1],
+[1,4,1,1,1,3,1,1,1,3,1,1,1,4,1],
+[5,1,1,2,1,1,1,5,1,1,1,2,1,1,5]
+]
+
+
+
+# /// DO NOT REMOVE ///
+#AUTOMATICALY CHOOSE DICTIONNARY AND POINTS BASED ON LANGUAGE SELECTION
+if LANGUAGE == 'french' :
+	DICTIONARY = french_letters #choose current dictionary
+	POINTS = french_points #choose points attributed per letter
+
+elif LANGUAGE == 'custom': #create your custom mix inside this one
+	DICTIONARY = french_letters
+	POINTS = english_points
+
+else: #default value
+	DICTIONARY = english_letters
+	POINTS = english_points

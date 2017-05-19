@@ -1,4 +1,5 @@
-#IMPORTS
+#___IMPORTS___
+
 import pygame
 from pygame.locals import *
 
@@ -11,7 +12,8 @@ from game_rules import *
 from math import floor
 
 
-#INITIALIZATION
+
+#___INITIALIZATION___
 
 #launch Pygame
 pygame.init()
@@ -55,28 +57,28 @@ board_state = [ ['?' for i in range(TILE_PER_BOARD_COLUMN)] for j in range(TILE_
 
 
 
-#IMAGES LOADING
+#___IMAGES LOADING___
+
 print ('    Loading images...')
+# TODO change path for Linux ?
+tile_start = pygame.image.load('./images/tiles/tile_start.png')
+tile = pygame.image.load('./images/tiles/tile_empty.png') 
+tile_double_letter = pygame.image.load('./images/tiles/tile_double_letter.png')
+tile_triple_letter = pygame.image.load('./images/tiles/tile_triple_letter.png')
+tile_double_word = pygame.image.load('./images/tiles/tile_double_word.png')
+tile_triple_word = pygame.image.load('./images/tiles/tile_triple_word.png')
 
-tile_start = pygame.image.load("./images/tile_start.png")
+board = pygame.image.load('./images/board.png')
+menu = pygame.image.load('./images/menu.png')
 
-tile = pygame.image.load("./images/tile.png") # TODO change path for Linux ?
-
-tile_double_letter = pygame.image.load("./images/tile_double_letter.png")
-tile_triple_letter = pygame.image.load("./images/tile_triple_letter.png")
-
-tile_double_word = pygame.image.load("./images/tile_double_word.png")
-tile_triple_word = pygame.image.load("./images/tile_triple_word.png")
-
-board = pygame.image.load("./images/board.png")
-
-menu = pygame.image.load("./images/menu.png")
-
+#TODO store letters images in an array
+letter_A = pygame.image.load('./images/letters/'+LANGUAGE+'/letter_A.png') #TEMP
+letter_A = pygame.transform.smoothscale(letter_A, (tile_size, tile_size) ) #TEMP
 print('    Images loaded')
 
 
 
-#FUNCTIONS
+#___FUNCTIONS___
 
 #Game window creation
 def refreshWindow(window, width, heigh) :
@@ -126,13 +128,17 @@ def drawAll() :
         x_pos = 0 + delta
         y_pos += tile_size
 
-    window.blit(menu, (board_size, 0))
 
+    window.blit(letter_A,(1.5*tile_size, 1.5*tile_size)) #TEMP
+    window.blit(letter_A,(1.5*tile_size+tile_size, 1.5*tile_size)) #TEMP
+    window.blit(letter_A,(1.5*tile_size+2*tile_size, 1.5*tile_size)) #TEMP
+   
+    window.blit(menu, (board_size, 0))
     pygame.display.flip()
 
+#update due to window resizing
 def updateRatio(width, heigh) :
     return min( float(width / 1920), float(heigh/1080) )
-
 def updateDelta() :
     return 1.5 * tile_size
 
@@ -168,12 +174,14 @@ def resizeMenu() :
 
 
 
-#WINDOW INITIALIZATION
-window = refreshWindow(window, settings.WIDTH, settings.HEIGH) #call "event.type == VIDEORESIZE"
+#___WINDOW INITIALIZATION___
+
+window = refreshWindow(window, settings.WIDTH, settings.HEIGH) #call 'event.type == VIDEORESIZE'
 
 
 
-#MAIN  GAME LOOP
+#___MAIN  GAME LOOP___
+
 while running:
     for event in pygame.event.get():
 
@@ -184,18 +192,21 @@ while running:
             if event.key == K_ESCAPE:
                 running = False #exit the game
 
-
-        elif (event.type == VIDEORESIZE) :
+        elif (event.type == VIDEORESIZE) : #properly refresh the game window if a resize is detected
             window = refreshWindow(window, event.dict['size'][0], event.dict['size'][1])
-            tile_start = pygame.image.load("./images/tile_start.png")
-            tile = pygame.image.load("./images/tile.png") #to regain quality
-            tile_double_letter = pygame.image.load("./images/tile_double_letter.png")
-            tile_triple_letter = pygame.image.load("./images/tile_triple_letter.png")
-            tile_double_word = pygame.image.load("./images/tile_double_word.png")
-            tile_triple_word = pygame.image.load("./images/tile_triple_word.png")
-            
-            board = pygame.image.load("./images/board.png") 
-            menu = pygame.image.load("./images/menu.png") 
+            #load again all images to gain quality in case of a zoom in after a zoom out
+            tile_start = pygame.image.load('./images/tiles/tile_start.png')
+            tile = pygame.image.load('./images/tiles/tile_empty.png')
+            tile_double_letter = pygame.image.load('./images/tiles/tile_double_letter.png')
+            tile_triple_letter = pygame.image.load('./images/tiles/tile_triple_letter.png')
+            tile_double_word = pygame.image.load('./images/tiles/tile_double_word.png')
+            tile_triple_word = pygame.image.load('./images/tiles/tile_triple_word.png')
+
+            board = pygame.image.load('./images/board.png') 
+            menu = pygame.image.load('./images/menu.png') 
+
+            letter_A = pygame.image.load('./images/letters/'+LANGUAGE+'/letter_A.png') #TEMP
+
 
             ratio = updateRatio(event.dict['size'][0], event.dict['size'][1])
 
@@ -215,8 +226,9 @@ while running:
             menu_heigh = updateMenuHeigh()
             menu = resizeMenu()
 
-            drawAll()
+            letter_A = pygame.transform.smoothscale(letter_A, (tile_size, tile_size) ) #TEMP
 
+            drawAll() #draw everything on screen
 
 
 
@@ -226,6 +238,10 @@ print('Game is closed')
 
 
 """ examples ...
+from random import randint
+print(randint(0,9))
+
+
 #get edges
 pygame.transform.laplacian()
 find edges in a surface
