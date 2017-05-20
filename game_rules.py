@@ -4,7 +4,7 @@
 #___BASIC OPTIONS___
 
 LANGUAGE = 'french' #choose your language set among 'french' or 'english' ('english' if non given)
-
+PLAYERS = ['Player 1', 'Player 2']
 
 
 #___ADVANCED OPTIONS___

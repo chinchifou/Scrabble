@@ -55,7 +55,8 @@ menu_heigh = round(MENU_HEIGH_IN_TILES * tile_size)
 
 #CHANGING DURING THE GAME
 board_state = [ ['?' for i in range(TILE_PER_BOARD_COLUMN)] for j in range(TILE_PER_BOARD_COLUMN) ]
-
+current_player = 0
+word_multiplier = 1 #TODO
 
 
 #___IMAGES LOADING___
@@ -173,6 +174,12 @@ def tileIsOnBoard(x,y) :
     else :
         return False
 
+def emptySlot(x,y) :
+    if board_state[x][y] == '?':
+        return True
+    else :
+        return False
+
 #RELOAD IMAGES
 def reloadTiles() :
     return {
@@ -247,6 +254,7 @@ window = refreshWindow(window, settings.WIDTH, settings.HEIGH) #call 'event.type
 #___MAIN  GAME LOOP___
 
 while running:
+
     for event in pygame.event.get():
 
         #UNCOMMON EVENTS
@@ -295,12 +303,21 @@ while running:
             tile_y = floor( (cursor_y - delta)/tile_size)
 
             if tileIsOnBoard(tile_x, tile_y) :
-                drawAll()
-                window.blit( letters['B'], (delta + tile_x*tile_size, delta + tile_y*tile_size) ) #TEMP
-                pygame.display.flip()
 
-                print('points for this slot : ', LAYOUT[tile_x][tile_y]) #TEMP
-                print('score for this move : ', POINTS['B'] * LAYOUT[tile_x][tile_y]) #TEMP
+                if emptySlot(tile_x,tile_y) : 
+
+                    drawAll()
+                    window.blit( letters['B'], (delta + tile_x*tile_size, delta + tile_y*tile_size) ) #TEMP
+                    pygame.display.flip()
+
+                    print('points for this slot : ', LAYOUT[tile_x][tile_y]) #TEMP
+                    print('score for this move : ', POINTS['B'] * LAYOUT[tile_x][tile_y]) #TEMP
+
+                    board_state[tile_x][tile_y] = 'B'
+                    print(board_state)
+
+                    current_player = (current_player + 1) % len(PLAYERS)
+                    print('current player : ', PLAYERS[current_player])
 
 
 
