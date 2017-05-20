@@ -1,7 +1,7 @@
 #CONFIGURATION FILE
 #GAME RULE
 
-#___BASIC OPTION___
+#___BASIC OPTIONS___
 
 LANGUAGE = 'french' #choose your language set among 'french' or 'english' ('english' if non given)
 
