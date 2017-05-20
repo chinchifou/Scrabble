@@ -42,10 +42,10 @@ MENU_HEIGH_IN_TILES = HEIGH_SCREEN_IN_TILES
 
 
 #CHANGING WITH WINDOW RESIZING
-ratio = float(settings.WIDTH / 1920.0) #reference resolution is 1920*1080
+zoom_factor = float(settings.WIDTH / 1920.0) #reference resolution is 1920*1080
 window =  pygame.display.set_mode( (0, 0) )
 
-tile_size = round(TILE_SIZE * ratio)
+tile_size = round(TILE_SIZE * zoom_factor)
 delta = 1.5 * tile_size #distance of board from top left corner
 board_size = round(BOARD_SIZE_IN_TILES * tile_size)
 menu_width = round(MENU_WIDTH_IN_TILES * tile_size)
@@ -72,8 +72,38 @@ board = pygame.image.load('./images/board.png')
 menu = pygame.image.load('./images/menu.png')
 
 #TODO store letters images in an array
-letter_A = pygame.image.load('./images/letters/'+LANGUAGE+'/letter_A.png') #TEMP
-letter_A = pygame.transform.smoothscale(letter_A, (tile_size, tile_size) ) #TEMP
+#LETTERS
+path_for_letters = './images/letters/'+LANGUAGE+'/letter_'
+
+letters = {
+'_joker' : pygame.image.load(path_for_letters+'_joker.png'),
+'A' : pygame.image.load(path_for_letters+'A.png'),
+'B' : pygame.image.load(path_for_letters+'B.png'),
+'C' : pygame.image.load(path_for_letters+'C.png'),
+'D' : pygame.image.load(path_for_letters+'D.png'),
+'E' : pygame.image.load(path_for_letters+'E.png'),
+'F' : pygame.image.load(path_for_letters+'F.png'),
+'G' : pygame.image.load(path_for_letters+'G.png'),
+'H' : pygame.image.load(path_for_letters+'H.png'),
+'I' : pygame.image.load(path_for_letters+'I.png'),
+'J' : pygame.image.load(path_for_letters+'J.png'),
+'K' : pygame.image.load(path_for_letters+'K.png'),
+'L' : pygame.image.load(path_for_letters+'L.png'),
+'M' : pygame.image.load(path_for_letters+'M.png'),
+'N' : pygame.image.load(path_for_letters+'N.png'),
+'O' : pygame.image.load(path_for_letters+'O.png'),
+'P' : pygame.image.load(path_for_letters+'P.png'),
+'Q' : pygame.image.load(path_for_letters+'Q.png'),
+'R' : pygame.image.load(path_for_letters+'R.png'),
+'S' : pygame.image.load(path_for_letters+'S.png'),
+'T' : pygame.image.load(path_for_letters+'T.png'),
+'U' : pygame.image.load(path_for_letters+'U.png'),
+'V' : pygame.image.load(path_for_letters+'V.png'),
+'W' : pygame.image.load(path_for_letters+'W.png'),
+'X' : pygame.image.load(path_for_letters+'X.png'),
+'Y' : pygame.image.load(path_for_letters+'Y.png'),
+'Z' : pygame.image.load(path_for_letters+'Z.png')
+}
 print('    Images loaded')
 
 
@@ -129,22 +159,23 @@ def drawAll() :
         y_pos += tile_size
 
 
-    window.blit(letter_A,(1.5*tile_size, 1.5*tile_size)) #TEMP
-    window.blit(letter_A,(1.5*tile_size+tile_size, 1.5*tile_size)) #TEMP
-    window.blit(letter_A,(1.5*tile_size+2*tile_size, 1.5*tile_size)) #TEMP
+    window.blit(letters['A'],(1.5*tile_size, 1.5*tile_size)) #TEMP
+    window.blit(letters['B'],(1.5*tile_size+tile_size, 1.5*tile_size)) #TEMP
+    window.blit(letters['C'],(1.5*tile_size+2*tile_size, 1.5*tile_size)) #TEMP
    
     window.blit(menu, (board_size, 0))
     pygame.display.flip()
 
 #update due to window resizing
-def updateRatio(width, heigh) :
+def updateZoomFactor(width, heigh) :
     return min( float(width / 1920), float(heigh/1080) )
 def updateDelta() :
     return 1.5 * tile_size
 
-#Resize tile    
+#Resize tile
+#TODO to be improved  
 def updateTileSize() :
-    return floor(TILE_SIZE * ratio) #TO IMPROVE, Based on tile size
+    return floor(TILE_SIZE * zoom_factor) #TO IMPROVE, Based on tile size
 def resizeTile() :
     return pygame.transform.smoothscale(tile, (tile_size, tile_size) )
 def resizeTileDoubleLetter() :
@@ -159,6 +190,7 @@ def resizeTileStart() :
     return pygame.transform.smoothscale(tile_start, (tile_size, tile_size) )    
 
 #Resize board
+#TODO without return but parameters
 def updateBoardSize() :
     return round( BOARD_SIZE_IN_TILES  * tile_size )
 def resizeBoard() :
@@ -205,10 +237,38 @@ while running:
             board = pygame.image.load('./images/board.png') 
             menu = pygame.image.load('./images/menu.png') 
 
-            letter_A = pygame.image.load('./images/letters/'+LANGUAGE+'/letter_A.png') #TEMP
+            letters = {
+            '_joker' : pygame.image.load(path_for_letters+'_joker.png'),
+            'A' : pygame.image.load(path_for_letters+'A.png'),
+            'B' : pygame.image.load(path_for_letters+'B.png'),
+            'C' : pygame.image.load(path_for_letters+'C.png'),
+            'D' : pygame.image.load(path_for_letters+'D.png'),
+            'E' : pygame.image.load(path_for_letters+'E.png'),
+            'F' : pygame.image.load(path_for_letters+'F.png'),
+            'G' : pygame.image.load(path_for_letters+'G.png'),
+            'H' : pygame.image.load(path_for_letters+'H.png'),
+            'I' : pygame.image.load(path_for_letters+'I.png'),
+            'J' : pygame.image.load(path_for_letters+'J.png'),
+            'K' : pygame.image.load(path_for_letters+'K.png'),
+            'L' : pygame.image.load(path_for_letters+'L.png'),
+            'M' : pygame.image.load(path_for_letters+'M.png'),
+            'N' : pygame.image.load(path_for_letters+'N.png'),
+            'O' : pygame.image.load(path_for_letters+'O.png'),
+            'P' : pygame.image.load(path_for_letters+'P.png'),
+            'Q' : pygame.image.load(path_for_letters+'Q.png'),
+            'R' : pygame.image.load(path_for_letters+'R.png'),
+            'S' : pygame.image.load(path_for_letters+'S.png'),
+            'T' : pygame.image.load(path_for_letters+'T.png'),
+            'U' : pygame.image.load(path_for_letters+'U.png'),
+            'V' : pygame.image.load(path_for_letters+'V.png'),
+            'W' : pygame.image.load(path_for_letters+'W.png'),
+            'X' : pygame.image.load(path_for_letters+'X.png'),
+            'Y' : pygame.image.load(path_for_letters+'Y.png'),
+            'Z' : pygame.image.load(path_for_letters+'Z.png')
+            }
 
 
-            ratio = updateRatio(event.dict['size'][0], event.dict['size'][1])
+            zoom_factor = updateZoomFactor(event.dict['size'][0], event.dict['size'][1])
 
             tile_size = updateTileSize()
             delta = updateDelta()
@@ -226,7 +286,8 @@ while running:
             menu_heigh = updateMenuHeigh()
             menu = resizeMenu()
 
-            letter_A = pygame.transform.smoothscale(letter_A, (tile_size, tile_size) ) #TEMP
+            for key in letters.keys() :
+                letters[key] = pygame.transform.smoothscale(letters[key], (tile_size, tile_size) ) #TEMP
 
             drawAll() #draw everything on screen
 

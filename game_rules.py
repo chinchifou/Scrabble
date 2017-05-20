@@ -184,7 +184,9 @@ if LANGUAGE == 'french' :
 
 elif LANGUAGE == 'custom': #create your custom mix inside this one
 	DICTIONARY = french_letters
+	LANGUAGE = 'french' #needed to find the folder where the letters are sotored
 	POINTS = english_points
+
 
 else: #default value
 	DICTIONARY = english_letters
