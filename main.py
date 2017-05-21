@@ -72,8 +72,8 @@ id_player = 0
 tile_x_hand = 0
 selected_letter = ''
 letter_from_board = False
-letters_just_played = {}
-
+letters_just_played = {} #format {'a' : (x, y)}
+#pb with uniqness of key in dictionary
 #scoring
 word_multiplier = 1 #TODO
 
@@ -252,6 +252,40 @@ def emptySlot(x,y) :
     else :
         return False
 
+def calculatePoints(letters_played) :
+    #FORMAT letters_just_played {'a' : (x, y)}
+    if len(letters_played) == 0 :
+        print( '  NOTHING PLAYED')
+        return 0
+    elif len(letters_played) == 1 :
+        #TODO
+        print('  ONE LETTER WORD')
+
+    elif len(letters_played) > 1 :
+        all_x = []
+        all_y = []
+        for key in letters_played.keys() :
+            all_x.append(letters_played[key][0])
+            all_y.append(letters_played[key][1])
+        delta_x = max(all_x) - min(all_x)
+        delta_y = max(all_y) - min(all_y)
+        if delta_x == 0 :
+            print('  VERTICAL WORD')
+        elif delta_y == 0 :
+            print (' HORIZONTAL WORD')
+        else :
+            print('  PROBLEM')
+
+        if (len(letters_played) == (max(delta_x, delta_y) +1)) :
+            print ('    WORD DOES NOT HAVE A HOLE')
+        else :
+            print('    THERE IS A HOLE IN THE WORD')
+
+    return 0 #TEMP
+
+        
+
+
 #RELOAD IMAGES
 def reloadTiles() :
     return {
@@ -388,6 +422,9 @@ while running:
 
         #COMMON EVENTS
         if event.type == KEYDOWN and event.key == K_SPACE : #NEXT PLAYER
+
+            current_player.poins = current_player.points + calculatePoints(letters_just_played) #scoring
+
             tile_x_hand = 0
             selected_letter = ''
             letter_from_board = False
