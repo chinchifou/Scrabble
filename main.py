@@ -11,12 +11,14 @@ from game_rules import *
 
 from math import floor
 
+from random import randint
 
 
 #___INITIALIZATION___
 
 #launch Pygame
 pygame.init()
+font = pygame.font.Font("", 60)
 running = True
 print ('Game is running')
 
@@ -40,6 +42,10 @@ BOARD_SIZE_IN_TILES = 18
 MENU_WIDTH_IN_TILES = WIDTH_SCREEN_IN_TILES - BOARD_SIZE_IN_TILES
 MENU_HEIGH_IN_TILES = HEIGH_SCREEN_IN_TILES
 
+ACTIONS = ('SELECT_A_LETTER', 'PLAY_A_LETTER')
+
+PLAYERS = []
+
 
 #CHANGING WITH WINDOW RESIZING
 zoom_factor = float(settings.WIDTH / 1920.0) #reference resolution is 1920*1080
@@ -54,8 +60,15 @@ menu_heigh = round(MENU_HEIGH_IN_TILES * tile_size)
 
 
 #CHANGING DURING THE GAME
+bag_of_letters = BAG_OF_LETTERS
+
 board_state = [ ['?' for i in range(TILE_PER_BOARD_COLUMN)] for j in range(TILE_PER_BOARD_COLUMN) ]
-current_player = 0
+board_state_at_turn_begining = board_state #TODO
+
+id_player = 0
+id_action = 0
+
+#scoring
 word_multiplier = 1 #TODO
 
 
@@ -111,6 +124,19 @@ menu = pygame.image.load('./images/menu.png')
 
 print('    Images loaded')
 
+#___CLASSES___
+class Player :
+
+    def __init__(self, name, points, hand) :
+        self.name = name
+        self.points = points
+        self.hand = hand
+
+    def printInstanceVariables(self) :
+        padding = '    '
+        print(padding+'name : ', self.name)
+        print(padding+'points : ', self.points)
+        print(padding+'hand : ', self.hand)
 
 
 #___FUNCTIONS___
@@ -139,7 +165,7 @@ def refreshWindow(window, width, heigh) :
     return window
 
 #Draw playing board
-def drawAll() :
+def drawBoardAndMenu() :
     x_pos = 0 + delta
     y_pos = 0 + delta
 
@@ -174,6 +200,11 @@ def drawAll() :
    
    #draw menu
     window.blit(menu, (board_size, 0))
+    pygame.display.flip()
+
+def drawTurnInfo(player) :
+    test_text = pygame.font.render(player.name,1,(0,0,0))
+    window.blit(test_text,(1.5*tile_size, 1.5*tile_size))
     pygame.display.flip()
 
 def tileIsOnBoard(x,y) :
@@ -257,7 +288,21 @@ def updateMenuHeigh() :
 
 window = refreshWindow(window, settings.WIDTH, settings.HEIGH) #call 'event.type == VIDEORESIZE'
 
+#___GAME INITIALIZATION___
+#Draw letters for each players
+for player_name in PLAYERS_NAME :
+    start_hand = []
+    for i in range(LETTERS_PER_HAND) :
+        random_int = randint(0,len(bag_of_letters)-1)
+        start_hand.append(bag_of_letters[random_int])
+        #bag_of_letters.remove(bag_of_letters[random_int])
+        del(bag_of_letters[random_int])
 
+    PLAYERS.append(Player(player_name,0,start_hand))
+
+#First player, first action
+current_player = PLAYERS[id_player]
+current_action = ACTIONS[0]
 
 #___MAIN  GAME LOOP___
 
@@ -295,7 +340,7 @@ while running:
             for key in tiles.keys() :
                 tiles[key] = pygame.transform.smoothscale(tiles[key], (tile_size, tile_size) )
 
-            drawAll() #draw everything on screen
+            drawBoardAndMenu() #draw everything on screen
 
         #COMMON EVENTS
         if event.type == KEYDOWN: #keyboard input
@@ -314,18 +359,33 @@ while running:
 
                 if emptySlot(tile_x,tile_y) : 
 
-                    drawAll()
+                    drawBoardAndMenu()
                     window.blit( letters['B'], (delta + tile_x*tile_size, delta + tile_y*tile_size) ) #TEMP
                     pygame.display.flip()
 
-                    print('points for this slot : ', LAYOUT[tile_x][tile_y]) #TEMP
-                    print('score for this move : ', POINTS['B'] * LAYOUT[tile_x][tile_y]) #TEMP
+                    #print('points for this slot : ', LAYOUT[tile_x][tile_y]) #TEMP
+                    #print('score for this move : ', POINTS['B'] * LAYOUT[tile_x][tile_y]) #TEMP
 
                     board_state[tile_x][tile_y] = 'B'
                     #print(board_state)
 
-                    current_player = (current_player + 1) % len(PLAYERS)
-                    print('current player : ', PLAYERS[current_player])
+                    #NEXT ACION
+                    id_action = ( id_action + 1 ) % len(ACTIONS)
+                    current_action = ACTIONS[id_action]
+                    print('Current action : ', current_action)
+
+
+                    #NEXT PLAYER
+                    id_player = (id_player + 1) % len(PLAYERS)
+                    current_player = PLAYERS[id_player]
+                    print('Current player :')
+                    PLAYERS[id_player].printInstanceVariables()
+
+                    drawTurnInfo(current_player)
+
+
+
+
 
 
 
@@ -351,5 +411,12 @@ if keys[K_LEFT]:
     self.char_x += 10
 
 elif (event.type == MOUSEBUTTONDOWN and event.button == 1) :
+
+
+#print on screen :
+font = pygame.font.Font("./images/Futura-BoldRegular.ttf", 60)
+test_letter = font.render('A',1,(0,0,0))
+window.blit(test_letter,(1.5*tile_size, 1.5*tile_size))
+pygame.display.flip()
 
 """

@@ -4,10 +4,13 @@
 #___BASIC OPTIONS___
 
 LANGUAGE = 'french' #choose your language set among 'french' or 'english' ('english' if non given)
-PLAYERS = ['Player 1', 'Player 2']
+PLAYERS_NAME = ['Tom', 'Jerry', 'The Cheese', 'Gandma']
 
 
 #___ADVANCED OPTIONS___
+
+#NUMBER OF LETTERS IN PLAYER HAND
+LETTERS_PER_HAND = 7
 
 #DICTIONARIES
 #TODO ADD PROPER ENGLISH DICTIONARY
@@ -179,15 +182,15 @@ LAYOUT = [
 # /// DO NOT REMOVE ///
 #AUTOMATICALY CHOOSE DICTIONNARY AND POINTS BASED ON LANGUAGE SELECTION
 if LANGUAGE == 'french' :
-	DICTIONARY = french_letters #choose current dictionary
+	BAG_OF_LETTERS = french_letters #choose current dictionary
 	POINTS = french_points #choose points attributed per letter
 
 elif LANGUAGE == 'custom': #create your custom mix inside this one
-	DICTIONARY = french_letters
+	BAG_OF_LETTERS = french_letters
 	LANGUAGE = 'french' #needed to find the folder where the letters are sotored
 	POINTS = english_points
 
 
 else: #default value
-	DICTIONARY = english_letters
+	BAG_OF_LETTERS = english_letters
 	POINTS = english_points
