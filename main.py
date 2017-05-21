@@ -200,16 +200,14 @@ def drawBoardAndMenu() :
             x_pos += tile_size
         x_pos = 0 + delta
         y_pos += tile_size
-
     #letters on board
     for row in range(0,TILE_PER_BOARD_COLUMN) :
         for column in range(0, TILE_PER_BOARD_COLUMN) :
             if board_state[row][column] != '?' :
                 window.blit( letters[ board_state[row][column] ], (delta + row * tile_size, delta + column * tile_size) )
-   
    #draw menu
     window.blit(menu, (board_size, 0))
-    pygame.display.flip()
+
 
 #Display on top of the screen the player who is currently playing
 def drawTurnInfo(player) :
@@ -217,14 +215,12 @@ def drawTurnInfo(player) :
     delta_info_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
     delta_info_y = delta
     window.blit(test_text,(delta_info_x, delta_info_y))
-    pygame.display.flip()
 
 def drawHand(hand) :
     delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
     delta_hand_y = delta + 2*tile_size
     for id_letter in range(len(hand)) :
         window.blit(letters[hand[id_letter]], (delta_hand_x + id_letter*tile_size , delta_hand_y)) 
-        pygame.display.flip() 
 
 def cursorIsOnBoard(cursor_x, cursor_y) :
     tile_x = floor( (cursor_x - delta)/tile_size)
@@ -320,7 +316,6 @@ def updateMenuHeigh() :
 
 
 
-
 #___WINDOW INITIALIZATION___
 
 window = refreshWindow(window, settings.WIDTH, settings.HEIGH) #call 'event.type == VIDEORESIZE'
@@ -388,6 +383,7 @@ while running:
             drawBoardAndMenu() #draw everything on screen
             drawTurnInfo(current_player)
             drawHand(current_player.hand)
+            pygame.display.flip()
             #TODO : remove display.flip() from hand and put it there
 
         #COMMON EVENTS
@@ -420,6 +416,7 @@ while running:
             drawBoardAndMenu() #draw everything on screen
             drawTurnInfo(current_player)
             drawHand(current_player.hand)
+            pygame.display.flip()
 
         elif ( event.type == MOUSEBUTTONDOWN and event.button == 1 ) : #left clic
 
@@ -485,6 +482,7 @@ while running:
                         window.blit( letters[selected_letter], (delta + tile_x_board*tile_size, delta + tile_y_board*tile_size) ) #TEMP?
                         drawTurnInfo(current_player)
                         drawHand(current_player.hand)
+                        pygame.display.flip()
 
                         letters_just_played[selected_letter] = (tile_x_board, tile_y_board)
                         selected_letter = ''
