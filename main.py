@@ -73,9 +73,6 @@ tile_x_hand = 0
 selected_letter = ''
 letter_from_board = False
 letters_just_played = {} #format {'a' : (x, y)}
-#pb with uniqness of key in dictionary
-#scoring
-word_multiplier = 1 #TODO
 
 #TODO : BACKUP TO ALLOW RESET
 board_state_at_turns_begining = board_state 
@@ -252,6 +249,31 @@ def emptySlot(x,y) :
     else :
         return False
 
+def calculatePointsForOneWord(letters_played) :
+    word_score = 0
+
+    word_multiplier_1 = 1
+    word_multiplier_2 = 1
+
+    for key in letters_played.keys() :
+
+        bonus = LAYOUT[key[0]][key[1]]
+        if bonus == 0 : #start_tile
+            bonus = 2
+        elif bonus == 4:
+            word_multiplier_1 = 2
+            bonus = 1
+        elif bonus == 5:
+            word_multiplier_2 = 3
+            bonus = 1
+
+        letter_points = POINTS[letters_played[key]]
+        word_score = word_score + (bonus * letter_points)
+
+    word_score = word_score * word_multiplier_1 * word_multiplier_2
+
+    return word_score
+
 def calculatePoints(letters_played) :
     #FORMAT letters_just_played {'a' : (x, y)}
     if len(letters_played) == 0 :
@@ -271,25 +293,68 @@ def calculatePoints(letters_played) :
             all_x.append(tuple_pos[0])
             all_y.append(tuple_pos[1])
 
-        delta_x = max(all_x) - min(all_x)
-        delta_y = max(all_y) - min(all_y)
-        
-        if delta_x == 0 :
-            print('  VERTICAL WORD')
-        elif delta_y == 0 :
+        min_x = min(all_x)
+        max_x = max(all_x)        
+        min_y = min(all_y)
+        max_y = max(all_y)
+
+        delta_x = max_x - min_x
+        delta_y = max_y - min_y
+
+        if delta_x == 0 : #TODO
+            print('  VERTICAL WORD')        
+
+            if (len(letters_played) == (max(delta_x, delta_y) +1)) :
+                print ('    WORD DOES NOT HAVE A HOLE')
+                #find where is the adjacent letter
+                y_border_1 = -1 
+                y_border_2 = -1 
+
+                if ( (min_y - 1) >= 0 ) : 
+                    if board_state[min_x][min_y-1] != '?' :
+                        y_border_1 = min_y-1
+                if ( (max_y + 1) <= (TILE_PER_BOARD_COLUMN-1) ) :
+                    if board_state[min_x][max_y+1] != '?' :
+                        y_border_2 = max_y+1
+
+                if (y_border_1 == -1 and y_border_2 == -1) : #DONE
+                    print('      THIS WORD DOES NOT CUT OTHER WORDS')
+                    word_score = calculatePointsForOneWord(letters_played)
+                    print('----WORD SCORE : ', word_score, ' -----')
+                    return word_score
+
+                elif y_border_1 > 0 and y_border_2 > 0 : #TODO
+                    print('      THIS WORD CUT TWO OTHERS WORDS')
+                    return 0
+
+                else : #DONE
+                    print('      THIS WORD CUT ONE OTHERS WORD')
+                    y_border = max(y_border_1, y_border_2)
+                    missing_letter = board_state[min_x][y_border]
+
+                    word_score = POINTS[missing_letter] + calculatePointsForOneWord(letters_played)
+                    print('----WORD SCORE : ', word_score, ' -----')
+                    return word_score
+
+            else : #TODO
+                print('    THERE IS A HOLE IN THE WORD')
+
+
+        elif delta_y == 0 : #TODO
             print (' HORIZONTAL WORD')
+
+            if (len(letters_played) == (max(delta_x, delta_y) +1)) :
+                print ('    WORD DOES NOT HAVE A HOLE')
+            else :
+                print('    THERE IS A HOLE IN THE WORD')
+
         else :
             print('  PROBLEM')
 
-        if (len(letters_played) == (max(delta_x, delta_y) +1)) :
-            print ('    WORD DOES NOT HAVE A HOLE')
-        else :
-            print('    THERE IS A HOLE IN THE WORD')
 
     return 0 #TEMP
 
         
-
 
 #RELOAD IMAGES
 def reloadTiles() :
@@ -428,7 +493,7 @@ while running:
         #COMMON EVENTS
         if event.type == KEYDOWN and event.key == K_SPACE : #NEXT PLAYER
 
-            current_player.poins = current_player.points + calculatePoints(letters_just_played) #scoring
+            current_player.points= current_player.points + calculatePoints(letters_just_played) #scoring
 
             tile_x_hand = 0
             selected_letter = ''
