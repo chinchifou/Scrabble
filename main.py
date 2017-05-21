@@ -143,8 +143,11 @@ def drawAll() :
     x_pos = 0 + delta
     y_pos = 0 + delta
 
+    #DRAW BOARD + TILES + LETTERS
+    #board borders
     window.blit(board, (0, 0))
 
+    #tiles
     for row in range(0,TILE_PER_BOARD_COLUMN) :
         for column in range(0, TILE_PER_BOARD_COLUMN) :
             if LAYOUT[row][column] == 0 :
@@ -163,8 +166,13 @@ def drawAll() :
         x_pos = 0 + delta
         y_pos += tile_size
 
-    #window.blit( letters['A'], (delta, delta) )
+    #letters on board
+    for row in range(0,TILE_PER_BOARD_COLUMN) :
+        for column in range(0, TILE_PER_BOARD_COLUMN) :
+            if board_state[row][column] != '?' :
+                window.blit( letters[ board_state[row][column] ], (delta + row * tile_size, delta + column * tile_size) )
    
+   #draw menu
     window.blit(menu, (board_size, 0))
     pygame.display.flip()
 
@@ -314,7 +322,7 @@ while running:
                     print('score for this move : ', POINTS['B'] * LAYOUT[tile_x][tile_y]) #TEMP
 
                     board_state[tile_x][tile_y] = 'B'
-                    print(board_state)
+                    #print(board_state)
 
                     current_player = (current_player + 1) % len(PLAYERS)
                     print('current player : ', PLAYERS[current_player])
