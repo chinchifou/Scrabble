@@ -58,6 +58,8 @@ board_size = round(BOARD_SIZE_IN_TILES * tile_size)
 menu_width = round(MENU_WIDTH_IN_TILES * tile_size)
 menu_heigh = round(MENU_HEIGH_IN_TILES * tile_size)
 
+font = pygame.font.Font("./images/defaultFont.ttf", tile_size)
+
 
 #CHANGING DURING THE GAME
 bag_of_letters = BAG_OF_LETTERS
@@ -203,8 +205,8 @@ def drawBoardAndMenu() :
     pygame.display.flip()
 
 def drawTurnInfo(player) :
-    test_text = font.render(player.name,1,(0,0,0))
-    window.blit(test_text,(1.5*tile_size, 1.5*tile_size))
+    test_text = font.render(player.name+"'S TURN",1,(143,144,138))
+    window.blit(test_text,(3*delta + TILE_PER_BOARD_COLUMN*tile_size, 1.5*tile_size))
     pygame.display.flip()
 
 def tileIsOnBoard(x,y) :
@@ -340,7 +342,10 @@ while running:
             for key in tiles.keys() :
                 tiles[key] = pygame.transform.smoothscale(tiles[key], (tile_size, tile_size) )
 
+            font = pygame.font.Font("./images/defaultFont.ttf", tile_size)
+
             drawBoardAndMenu() #draw everything on screen
+            drawTurnInfo(current_player)
 
         #COMMON EVENTS
         if event.type == KEYDOWN: #keyboard input

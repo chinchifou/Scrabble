@@ -8,7 +8,7 @@ FULLSCREEN = False #enable Fullscreen mode or not
 
 RESIZABLE = True #enable the Window to be resizable or not
 
-RESOLUTION_AUTO = True #let the application find the best resolution (current resolution of the monitor)
+RESOLUTION_AUTO = False #let the application find the best resolution (current resolution of the monitor)
 
 
 
