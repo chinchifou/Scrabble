@@ -69,6 +69,7 @@ board_state = [ ['?' for i in range(TILE_PER_BOARD_COLUMN)] for j in range(TILE_
 
 id_player = 0
 
+tile_x_hand = 0
 selected_letter = ''
 letters_just_played = {}
 
@@ -390,6 +391,7 @@ while running:
 
         #COMMON EVENTS
         if event.type == KEYDOWN and event.key == K_SPACE : #NEXT PLAYER
+            tile_x_hand = 0
             selected_letter = ''
             letters_just_played = {}
 
@@ -404,6 +406,14 @@ while running:
 
             hand_at_turns_begining = current_player.hand
             board_state_at_turns_begining = board_state
+
+            #TODO : draw tiles
+            while len(current_player.hand) < LETTERS_PER_HAND and len(BAG_OF_LETTERS) > 1 :
+                random_int = randint(0,len(bag_of_letters)-1)
+                current_player.hand.append(bag_of_letters[random_int])
+                del(bag_of_letters[random_int])
+
+            print('remaining tiles in bag : ', len(BAG_OF_LETTERS))
 
             drawBoardAndMenu() #draw everything on screen
             drawTurnInfo(current_player)
@@ -453,7 +463,6 @@ while running:
 
             elif current_action == 'PLAY_A_LETTER' :
 
-
                 if cursorIsOnBoard(cursor_x, cursor_y) :
 
                     tile_x_board = floor( (cursor_x - delta)/tile_size)
@@ -462,6 +471,7 @@ while running:
                     if emptySlot(tile_x_board,tile_y_board) : 
 
                         board_state[tile_x_board][tile_y_board] = selected_letter
+                        del(current_player.hand[tile_x_hand])
 
                         drawBoardAndMenu()
                         window.blit( letters[selected_letter], (delta + tile_x_board*tile_size, delta + tile_y_board*tile_size) ) #TEMP?
