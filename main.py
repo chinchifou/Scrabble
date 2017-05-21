@@ -18,7 +18,7 @@ from random import randint
 
 #launch Pygame
 pygame.init()
-font = pygame.font.Font("", 60)
+font = pygame.font.Font("./images/defaultFont.ttf", 60)
 running = True
 print ('Game is running')
 
@@ -203,7 +203,7 @@ def drawBoardAndMenu() :
     pygame.display.flip()
 
 def drawTurnInfo(player) :
-    test_text = pygame.font.render(player.name,1,(0,0,0))
+    test_text = font.render(player.name,1,(0,0,0))
     window.blit(test_text,(1.5*tile_size, 1.5*tile_size))
     pygame.display.flip()
 
