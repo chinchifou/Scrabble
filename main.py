@@ -257,18 +257,23 @@ def calculatePoints(letters_played) :
     if len(letters_played) == 0 :
         print( '  NOTHING PLAYED')
         return 0
+
     elif len(letters_played) == 1 :
         #TODO
         print('  ONE LETTER WORD')
+        return 0
 
     elif len(letters_played) > 1 :
         all_x = []
         all_y = []
-        for key in letters_played.keys() :
-            all_x.append(letters_played[key][0])
-            all_y.append(letters_played[key][1])
+
+        for tuple_pos in letters_played.keys() :
+            all_x.append(tuple_pos[0])
+            all_y.append(tuple_pos[1])
+
         delta_x = max(all_x) - min(all_x)
         delta_y = max(all_y) - min(all_y)
+        
         if delta_x == 0 :
             print('  VERTICAL WORD')
         elif delta_y == 0 :
@@ -470,7 +475,7 @@ while running:
 
                     selected_letter = board_state[tile_x_board][tile_y_board]
                     #check if the letter has just been played by this player or not
-                    if ( selected_letter in(letters_just_played.keys()) and ( tile_x_board == letters_just_played[selected_letter][0] ) and ( tile_y_board == letters_just_played[selected_letter][1] ) ) :
+                    if ( selected_letter in(letters_just_played.values()) and ( (tile_x_board, tile_y_board) in( letters_just_played.keys() ) ) ) :
 
                         letter_from_board = True
                         print('selected_letter is : ', selected_letter)
@@ -521,7 +526,7 @@ while running:
                         drawHand(current_player.hand)
                         pygame.display.flip()
 
-                        letters_just_played[selected_letter] = (tile_x_board, tile_y_board)
+                        letters_just_played[(tile_x_board, tile_y_board)] = selected_letter
                         selected_letter = ''
 
                         #print(board_state)
