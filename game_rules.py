@@ -190,7 +190,6 @@ elif LANGUAGE == 'custom': #create your custom mix inside this one
 	LANGUAGE = 'french' #needed to find the folder where the letters are sotored
 	POINTS = english_points
 
-
 else: #default value
 	BAG_OF_LETTERS = english_letters
 	POINTS = english_points

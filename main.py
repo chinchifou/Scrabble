@@ -71,6 +71,7 @@ id_player = 0
 
 tile_x_hand = 0
 selected_letter = ''
+letter_from_board = False
 letters_just_played = {}
 
 #scoring
@@ -393,6 +394,7 @@ while running:
         if event.type == KEYDOWN and event.key == K_SPACE : #NEXT PLAYER
             tile_x_hand = 0
             selected_letter = ''
+            letter_from_board = False
             letters_just_played = {}
 
             #NEXT PLAYER
@@ -435,8 +437,11 @@ while running:
                     selected_letter = board_state[tile_x_board][tile_y_board]
                     #check if the letter has just been played by this player or not
                     if ( selected_letter in(letters_just_played.keys()) and ( tile_x_board == letters_just_played[selected_letter][0] ) and ( tile_y_board == letters_just_played[selected_letter][1] ) ) :
+
+                        letter_from_board = True
                         print('selected_letter is : ', selected_letter)
                         board_state[tile_x_board][tile_y_board] = '?'
+
                         #NEXT ACION
                         current_action = ACTIONS[1] #play a letter
                         print('Current action : ', current_action)
@@ -454,6 +459,7 @@ while running:
                         tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
 
                         selected_letter = current_player.hand[tile_x_hand]
+                        letter_from_board = False
                         print('selected_letter is : ', selected_letter)
 
                         #NEXT ACION
@@ -471,7 +477,9 @@ while running:
                     if emptySlot(tile_x_board,tile_y_board) : 
 
                         board_state[tile_x_board][tile_y_board] = selected_letter
-                        del(current_player.hand[tile_x_hand])
+
+                        if letter_from_board == False :
+                            del(current_player.hand[tile_x_hand])
 
                         drawBoardAndMenu()
                         window.blit( letters[selected_letter], (delta + tile_x_board*tile_size, delta + tile_y_board*tile_size) ) #TEMP?
