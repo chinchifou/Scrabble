@@ -65,7 +65,6 @@ font = pygame.font.Font("./images/defaultFont.ttf", tile_size)
 bag_of_letters = BAG_OF_LETTERS
 
 board_state = [ ['?' for i in range(TILE_PER_BOARD_COLUMN)] for j in range(TILE_PER_BOARD_COLUMN) ]
-board_state_at_turn_begining = board_state #TODO
 
 id_player = 0
 id_action = 0
@@ -73,6 +72,9 @@ id_action = 0
 #scoring
 word_multiplier = 1 #TODO
 
+#TODO : BACKUP TO ALLOW RESET
+board_state_at_turns_begining = board_state 
+hand_at_turns_begining = []
 
 #___IMAGES LOADING___
 
@@ -92,7 +94,7 @@ tiles = {
 #LETTERS
 path_for_letters = './images/letters/'+LANGUAGE+'/letter_'
 letters = {
-'_joker' : pygame.image.load(path_for_letters+'_joker.png'),
+'*' : pygame.image.load(path_for_letters+'_joker.png'),
 'A' : pygame.image.load(path_for_letters+'A.png'),
 'B' : pygame.image.load(path_for_letters+'B.png'),
 'C' : pygame.image.load(path_for_letters+'C.png'),
@@ -204,10 +206,20 @@ def drawBoardAndMenu() :
     window.blit(menu, (board_size, 0))
     pygame.display.flip()
 
+#Display on top of the screen the player who is currently playing
 def drawTurnInfo(player) :
     test_text = font.render(player.name+"'S TURN",1,(143,144,138))
-    window.blit(test_text,(3*delta + TILE_PER_BOARD_COLUMN*tile_size, 1.5*tile_size))
+    delta_info_x = 3*delta + TILE_PER_BOARD_COLUMN*tile_size
+    delta_info_y = delta
+    window.blit(test_text,(delta_info_x, delta_info_y))
     pygame.display.flip()
+
+def drawHand(hand) :
+    delta_hand_x = 3*delta + TILE_PER_BOARD_COLUMN*tile_size 
+    delta_hand_y = delta + 2*tile_size
+    for id_letter in range(len(hand)) :
+        window.blit(letters[hand[id_letter]], (delta_hand_x + id_letter*tile_size , delta_hand_y)) 
+        pygame.display.flip() 
 
 def tileIsOnBoard(x,y) :
     if ( x in range (0, TILE_PER_BOARD_COLUMN ) ) and ( y in range (0, TILE_PER_BOARD_COLUMN ) ) :
@@ -234,7 +246,7 @@ def reloadTiles() :
 
 def reloadLetters() :
     return {
-            '_joker' : pygame.image.load(path_for_letters+'_joker.png'),
+            '*' : pygame.image.load(path_for_letters+'_joker.png'),
             'A' : pygame.image.load(path_for_letters+'A.png'),
             'B' : pygame.image.load(path_for_letters+'B.png'),
             'C' : pygame.image.load(path_for_letters+'C.png'),
@@ -346,6 +358,7 @@ while running:
 
             drawBoardAndMenu() #draw everything on screen
             drawTurnInfo(current_player)
+            drawHand(current_player.hand)
 
         #COMMON EVENTS
         if event.type == KEYDOWN: #keyboard input
@@ -387,6 +400,8 @@ while running:
                     PLAYERS[id_player].printInstanceVariables()
 
                     drawTurnInfo(current_player)
+
+                    drawHand(current_player.hand)
 
 
 
