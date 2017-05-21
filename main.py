@@ -209,13 +209,13 @@ def drawBoardAndMenu() :
 #Display on top of the screen the player who is currently playing
 def drawTurnInfo(player) :
     test_text = font.render(player.name+"'S TURN",1,(143,144,138))
-    delta_info_x = 3*delta + TILE_PER_BOARD_COLUMN*tile_size
+    delta_info_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
     delta_info_y = delta
     window.blit(test_text,(delta_info_x, delta_info_y))
     pygame.display.flip()
 
 def drawHand(hand) :
-    delta_hand_x = 3*delta + TILE_PER_BOARD_COLUMN*tile_size 
+    delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
     delta_hand_y = delta + 2*tile_size
     for id_letter in range(len(hand)) :
         window.blit(letters[hand[id_letter]], (delta_hand_x + id_letter*tile_size , delta_hand_y)) 
@@ -359,6 +359,7 @@ while running:
             drawBoardAndMenu() #draw everything on screen
             drawTurnInfo(current_player)
             drawHand(current_player.hand)
+            #TODO : remove display.flip() from hand and put it there
 
         #COMMON EVENTS
         if event.type == KEYDOWN: #keyboard input
@@ -381,9 +382,6 @@ while running:
                     window.blit( letters['B'], (delta + tile_x*tile_size, delta + tile_y*tile_size) ) #TEMP
                     pygame.display.flip()
 
-                    #print('points for this slot : ', LAYOUT[tile_x][tile_y]) #TEMP
-                    #print('score for this move : ', POINTS['B'] * LAYOUT[tile_x][tile_y]) #TEMP
-
                     board_state[tile_x][tile_y] = 'B'
                     #print(board_state)
 
@@ -392,7 +390,6 @@ while running:
                     current_action = ACTIONS[id_action]
                     print('Current action : ', current_action)
 
-
                     #NEXT PLAYER
                     id_player = (id_player + 1) % len(PLAYERS)
                     current_player = PLAYERS[id_player]
@@ -400,11 +397,8 @@ while running:
                     PLAYERS[id_player].printInstanceVariables()
 
                     drawTurnInfo(current_player)
-
                     drawHand(current_player.hand)
-
-
-
+                    #TODO : remove display.flip() from hand and put it there
 
 
 
@@ -439,4 +433,7 @@ test_letter = font.render('A',1,(0,0,0))
 window.blit(test_letter,(1.5*tile_size, 1.5*tile_size))
 pygame.display.flip()
 
+
+#print('points for this slot : ', LAYOUT[tile_x][tile_y]) #TEMP
+#print('score for this move : ', POINTS['B'] * LAYOUT[tile_x][tile_y]) #TEMP
 """
