@@ -68,10 +68,9 @@ bag_of_letters = BAG_OF_LETTERS
 board_state = [ ['?' for i in range(TILE_PER_BOARD_COLUMN)] for j in range(TILE_PER_BOARD_COLUMN) ]
 
 id_player = 0
-id_action = 0
 
 selected_letter = ''
-letters_just_played = ['']
+letters_just_played = {}
 
 #scoring
 word_multiplier = 1 #TODO
@@ -338,7 +337,7 @@ for player_name in PLAYERS_NAME :
 
 #First player, first action
 current_player = PLAYERS[id_player]
-current_action = ACTIONS[0]
+current_action = ACTIONS[0] #select a letter
 
 hand_at_turns_begining = current_player.hand
 board_state_at_turns_begining = board_state
@@ -351,9 +350,9 @@ while running:
 
         #UNCOMMON EVENTS
         if event.type == KEYDOWN and event.key == K_ESCAPE : #keyboard -> ESCAPE
-                running = False #exit the game
+            running = False #exit the game
 
-        if (event.type == pygame.QUIT) : #close the game window
+        elif (event.type == pygame.QUIT) : #close the game window
             running = False #exit the game        
 
         elif (event.type == VIDEORESIZE) : #properly refresh the game window if a resize is detected
@@ -391,11 +390,17 @@ while running:
 
         #COMMON EVENTS
         if event.type == KEYDOWN and event.key == K_SPACE : #NEXT PLAYER
+            selected_letter = ''
+            letters_just_played = {}
+
             #NEXT PLAYER
             id_player = (id_player + 1) % len(PLAYERS)
             current_player = PLAYERS[id_player]
             print('Current player :')
             PLAYERS[id_player].printInstanceVariables()
+
+            current_action = ACTIONS[0] #select a letter
+            print('Current action : ', current_action)
 
             hand_at_turns_begining = current_player.hand
             board_state_at_turns_begining = board_state
@@ -418,13 +423,12 @@ while running:
                     tile_y_board = floor( (cursor_y - delta)/tile_size)
 
                     selected_letter = board_state[tile_x_board][tile_y_board]
-
-                    if ( selected_letter in(letters_just_played) ) :
+                    #check if the letter has just been played by this player or not
+                    if ( selected_letter in(letters_just_played.keys()) and ( tile_x_board == letters_just_played[selected_letter][0] ) and ( tile_y_board == letters_just_played[selected_letter][1] ) ) :
                         print('selected_letter is : ', selected_letter)
                         board_state[tile_x_board][tile_y_board] = '?'
                         #NEXT ACION
-                        id_action = ( id_action + 1 ) % len(ACTIONS)
-                        current_action = ACTIONS[id_action]
+                        current_action = ACTIONS[1] #play a letter
                         print('Current action : ', current_action)
 
                     else :
@@ -443,8 +447,7 @@ while running:
                         print('selected_letter is : ', selected_letter)
 
                         #NEXT ACION
-                        id_action = ( id_action + 1 ) % len(ACTIONS)
-                        current_action = ACTIONS[id_action]
+                        current_action = ACTIONS[1] #play a letter
                         print('Current action : ', current_action)
 
 
@@ -458,23 +461,20 @@ while running:
 
                     if emptySlot(tile_x_board,tile_y_board) : 
 
-                        drawBoardAndMenu()
-                        window.blit( letters[selected_letter], (delta + tile_x_board*tile_size, delta + tile_y_board*tile_size) ) #TEMP
-                        pygame.display.flip() #TODO : to remove
-
                         board_state[tile_x_board][tile_y_board] = selected_letter
-                        letters_just_played.append(selected_letter)
+
+                        drawBoardAndMenu()
+                        window.blit( letters[selected_letter], (delta + tile_x_board*tile_size, delta + tile_y_board*tile_size) ) #TEMP?
+                        drawTurnInfo(current_player)
+                        drawHand(current_player.hand)
+
+                        letters_just_played[selected_letter] = (tile_x_board, tile_y_board)
                         selected_letter = ''
 
                         #print(board_state)
-
                         #NEXT ACION
-                        id_action = ( id_action + 1 ) % len(ACTIONS)
-                        current_action = ACTIONS[id_action]
+                        current_action = ACTIONS[0]
                         print('Current action : ', current_action)
-
-                        drawTurnInfo(current_player)
-                        drawHand(current_player.hand)
                         #TODO : remove display.flip() from hand and put it there
 
 
