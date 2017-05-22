@@ -252,6 +252,7 @@ def emptySlot(x,y) :
 def calculatePointsForOneWord(letters_played) :
     word_score = 0
 
+    word_multiplier_0 = 1
     word_multiplier_1 = 1
     word_multiplier_2 = 1
 
@@ -259,7 +260,8 @@ def calculatePointsForOneWord(letters_played) :
 
         bonus = LAYOUT[key[0]][key[1]]
         if bonus == 0 : #start_tile
-            bonus = 2
+            word_multiplier_0 = 2
+            bonus = 1
         elif bonus == 4:
             word_multiplier_1 = 2
             bonus = 1
@@ -270,7 +272,8 @@ def calculatePointsForOneWord(letters_played) :
         letter_points = POINTS[letters_played[key]]
         word_score = word_score + (bonus * letter_points)
 
-    word_score = word_score * word_multiplier_1 * word_multiplier_2
+
+    word_score = word_score * word_multiplier_0 * word_multiplier_1 * word_multiplier_2
 
     return word_score
 
@@ -317,15 +320,65 @@ def calculatePoints(letters_played) :
                     if board_state[min_x][max_y+1] != '?' :
                         y_border_2 = max_y+1
 
-                if (y_border_1 == -1 and y_border_2 == -1) : #DONE
-                    print('      THIS WORD DOES NOT CUT OTHER WORDS')
-                    word_score = calculatePointsForOneWord(letters_played)
+                if (y_border_1 == -1 and y_border_2 == -1) : #TODO if begins or ends an existing word !
+                    print('      THIS WORD DOES NOT CROSS OTHER WORDS')
+
+                    new_word_score = calculatePointsForOneWord(letters_played)
+                    x_sider_1 = -1
+                    x_sider_2 = -1
+                    y_sider_1 = -1
+                    y_sider_2 = -1
+
+                    if ( (min_x - 1) >= 0 ):
+                        for pos in letters_played.keys() :
+                            if board_state[pos[0]-1][pos[1]] != '?':
+                                x_sider_1 = pos[0]-1
+                                y_sider_1 = pos[1] 
+                    if ( (min_x + 1) <= TILE_PER_BOARD_COLUMN-1 ) :
+                        for pos in letters_played.keys() :
+                            if board_state[pos[0]+1][pos[1]] != '?':
+                                x_sider_2 = pos[0]+1
+                                y_sider_2 = pos[1]
+
+                    old_word_score_1 = 0
+                    if ( (x_sider_1 >= 0) and (y_sider_1 >= 0) ) :
+                        print('        THIS WORD ENDS AN EXISTING WORD')
+                        it_x = x_sider_1
+                        old_word_letters = []
+
+                        while( (it_x >= 0) and (board_state[it_x][y_sider_1] != '?') ) :
+                            old_word_letters.append(board_state[it_x][y_sider_1])
+                            it_x = it_x - 1
+
+                        for letter in old_word_letters :
+                            old_word_score_1 = old_word_score_1 + POINTS[letter]
+
+                    old_word_score_2 = 0
+                    if ( (x_sider_2 >= 0) and (y_sider_2 >= 0) ) :
+                        print('        THIS WORD BEGINS AN EXISTING WORD')
+                        #This code does not work if the created word begins/ends two different words ...
+                        it_x = x_sider_2
+                        old_word_letters = []
+                        while( (it_x >= 0) and (board_state[it_x][y_sider_2] != '?') ) :
+                            old_word_letters.append(board_state[it_x][y_sider_2])
+                            it_x = it_x + 1
+
+                        for letter in old_word_letters :
+                            old_word_score_2 = old_word_score_2 + POINTS[letter]
+
+                    total_score = new_word_score + old_word_score_1 + old_word_score_2
+                    print('----WORD SCORE : ', total_score, ' -----')
+                    return total_score #TO TEST
+
+
+                elif y_border_1 > 0 and y_border_2 > 0 : #DONE
+                    print('      THIS WORD CUT TWO OTHERS WORDS')
+                    missing_letter_1 = board_state[min_x][y_border_1]
+                    missing_letter_2 = board_state[min_x][y_border_2]
+
+                    word_score = POINTS[missing_letter_1] + POINTS[missing_letter_2] + calculatePointsForOneWord(letters_played)
                     print('----WORD SCORE : ', word_score, ' -----')
                     return word_score
-
-                elif y_border_1 > 0 and y_border_2 > 0 : #TODO
-                    print('      THIS WORD CUT TWO OTHERS WORDS')
-                    return 0
 
                 else : #DONE
                     print('      THIS WORD CUT ONE OTHERS WORD')
@@ -503,11 +556,11 @@ while running:
             #NEXT PLAYER
             id_player = (id_player + 1) % len(PLAYERS)
             current_player = PLAYERS[id_player]
-            print('Current player :')
+            #print('Current player :')
             PLAYERS[id_player].printInstanceVariables()
 
             current_action = ACTIONS[0] #select a letter
-            print('Current action : ', current_action)
+            #print('Current action : ', current_action)
 
             hand_at_turns_begining = current_player.hand
             board_state_at_turns_begining = board_state
@@ -518,7 +571,7 @@ while running:
                 current_player.hand.append(bag_of_letters[random_int])
                 del(bag_of_letters[random_int])
 
-            print('remaining tiles in bag : ', len(BAG_OF_LETTERS))
+            #print('remaining tiles in bag : ', len(BAG_OF_LETTERS))
 
             drawBoardAndMenu() #draw everything on screen
             drawTurnInfo(current_player)
@@ -533,7 +586,7 @@ while running:
             if current_action == 'SELECT_A_LETTER' :
 
                 if cursorIsOnBoard(cursor_x, cursor_y) :
-                    print('tile is on board')
+                    #print('tile is on board')
 
                     tile_x_board = floor( (cursor_x - delta)/tile_size)
                     tile_y_board = floor( (cursor_y - delta)/tile_size)
@@ -543,32 +596,33 @@ while running:
                     if ( selected_letter in(letters_just_played.values()) and ( (tile_x_board, tile_y_board) in( letters_just_played.keys() ) ) ) :
 
                         letter_from_board = True
-                        print('selected_letter is : ', selected_letter)
+                        del(letters_just_played[(tile_x_board, tile_y_board)])
+                        #print('selected_letter is : ', selected_letter)
                         board_state[tile_x_board][tile_y_board] = '?'
 
                         #NEXT ACION
                         current_action = ACTIONS[1] #play a letter
-                        print('Current action : ', current_action)
+                        #print('Current action : ', current_action)
 
                     else :
                         selected_letter = ''
 
                 else : #not on board
-                    print('tile is NOT on board')
+                    #print('tile is NOT on board')
 
                     if cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
-                        print('Tile is in hand')
+                        #print('Tile is in hand')
 
                         delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
                         tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
 
                         selected_letter = current_player.hand[tile_x_hand]
                         letter_from_board = False
-                        print('selected_letter is : ', selected_letter)
+                        #print('selected_letter is : ', selected_letter)
 
                         #NEXT ACION
                         current_action = ACTIONS[1] #play a letter
-                        print('Current action : ', current_action)
+                        #print('Current action : ', current_action)
 
 
             elif current_action == 'PLAY_A_LETTER' :
@@ -597,7 +651,7 @@ while running:
                         #print(board_state)
                         #NEXT ACION
                         current_action = ACTIONS[0]
-                        print('Current action : ', current_action)
+                        #print('Current action : ', current_action)
                         #TODO : remove display.flip() from hand and put it there
 
 
