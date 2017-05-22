@@ -252,29 +252,25 @@ def emptySlot(x,y) :
 def calculatePointsForOneWord(letters_played) :
     word_score = 0
 
-    word_multiplier_0 = 1
-    word_multiplier_1 = 1
-    word_multiplier_2 = 1
+    word_multiplier = 1
 
     for key in letters_played.keys() :
 
         bonus = LAYOUT[key[0]][key[1]]
         if bonus == 0 : #start_tile
-            word_multiplier_0 = 2
+            word_multiplier *= 2
             bonus = 1
         elif bonus == 4:
-            word_multiplier_1 = 2
+            word_multiplier *= 2
             bonus = 1
         elif bonus == 5:
-            word_multiplier_2 = 3
+            word_multiplier *= 3
             bonus = 1
 
         letter_points = POINTS[letters_played[key]]
         word_score = word_score + (bonus * letter_points)
 
-
-    word_score = word_score * word_multiplier_0 * word_multiplier_1 * word_multiplier_2
-
+    word_score = word_score * word_multiplier
     return word_score
 
 def calculatePoints(letters_played) :
@@ -283,8 +279,7 @@ def calculatePoints(letters_played) :
         print( '  NOTHING PLAYED')
         return 0
 
-    elif len(letters_played) == 1 :
-        #TODO
+    elif len(letters_played) == 1 : #TODO
         print('  ONE LETTER WORD')
         return 0
 
@@ -320,7 +315,7 @@ def calculatePoints(letters_played) :
                     if board_state[min_x][max_y+1] != '?' :
                         y_border_2 = max_y+1
 
-                if (y_border_1 == -1 and y_border_2 == -1) : #TODO if begins or ends an existing word !
+                if (y_border_1 == -1 and y_border_2 == -1) :
                     print('      THIS WORD DOES NOT CROSS OTHER WORDS')
 
                     new_word_score = calculatePointsForOneWord(letters_played)
@@ -343,9 +338,9 @@ def calculatePoints(letters_played) :
                     old_word_score_1 = 0
                     if ( (x_sider_1 >= 0) and (y_sider_1 >= 0) ) :
                         print('        THIS WORD ENDS AN EXISTING WORD')
-                        it_x = x_sider_1
-                        old_word_letters = []
+                        it_x = x_sider_1 + 1 #to count the common letter
 
+                        old_word_letters = []
                         while( (it_x >= 0) and (board_state[it_x][y_sider_1] != '?') ) :
                             old_word_letters.append(board_state[it_x][y_sider_1])
                             it_x = it_x - 1
@@ -357,7 +352,8 @@ def calculatePoints(letters_played) :
                     if ( (x_sider_2 >= 0) and (y_sider_2 >= 0) ) :
                         print('        THIS WORD BEGINS AN EXISTING WORD')
                         #This code does not work if the created word begins/ends two different words ...
-                        it_x = x_sider_2
+                        it_x = x_sider_2 - 1
+
                         old_word_letters = []
                         while( (it_x >= 0) and (board_state[it_x][y_sider_2] != '?') ) :
                             old_word_letters.append(board_state[it_x][y_sider_2])
@@ -368,7 +364,7 @@ def calculatePoints(letters_played) :
 
                     total_score = new_word_score + old_word_score_1 + old_word_score_2
                     print('----WORD SCORE : ', total_score, ' -----')
-                    return total_score #TO TEST
+                    return total_score
 
 
                 elif y_border_1 > 0 and y_border_2 > 0 : #DONE
@@ -389,8 +385,32 @@ def calculatePoints(letters_played) :
                     print('----WORD SCORE : ', word_score, ' -----')
                     return word_score
 
-            else : #TODO
-                print('    THERE IS A HOLE IN THE WORD')
+            else : #DONE
+                print('    THERE IS A HOLE IN THE WORD') #not working with word multiplier
+
+                #TODO : case where this word also begins or ends a other words ...
+
+                word_score = 0
+
+                y_holes = []
+                for y_pos in range(min_y, max_y+1) :
+                    if ( not ( (min_x, y_pos) in letters_played ) ) :
+                        y_holes.append(y_pos)
+
+                old_layout = {}
+                for y_hole in y_holes :
+                    letters_played[(min_x, y_hole)] = board_state[min_x][y_hole]
+                    old_layout[(min_x, y_hole)] = LAYOUT[min_x][y_hole]
+                    LAYOUT[min_x][y_hole] = 1
+
+                word_score = calculatePointsForOneWord(letters_played)
+
+                for key in old_layout.keys() :
+                    LAYOUT[key[0]][key[1]] = old_layout[key] #set layout back to normal
+
+                print('----WORD SCORE : ', word_score, ' -----')
+                return word_score
+
 
 
         elif delta_y == 0 : #TODO
@@ -541,7 +561,6 @@ while running:
             drawTurnInfo(current_player)
             drawHand(current_player.hand)
             pygame.display.flip()
-            #TODO : remove display.flip() from hand and put it there
 
         #COMMON EVENTS
         if event.type == KEYDOWN and event.key == K_SPACE : #NEXT PLAYER
@@ -565,7 +584,6 @@ while running:
             hand_at_turns_begining = current_player.hand
             board_state_at_turns_begining = board_state
 
-            #TODO : draw tiles
             while len(current_player.hand) < LETTERS_PER_HAND and len(BAG_OF_LETTERS) > 1 :
                 random_int = randint(0,len(bag_of_letters)-1)
                 current_player.hand.append(bag_of_letters[random_int])
@@ -652,7 +670,6 @@ while running:
                         #NEXT ACION
                         current_action = ACTIONS[0]
                         #print('Current action : ', current_action)
-                        #TODO : remove display.flip() from hand and put it there
 
 
 
