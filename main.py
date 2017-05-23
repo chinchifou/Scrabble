@@ -140,6 +140,7 @@ class Player :
 
     def printInstanceVariables(self) :
         padding = '    '
+        print()
         print(padding+'name : ', self.name)
         print(padding+'points : ', self.points)
         print(padding+'hand : ', self.hand)
@@ -257,7 +258,7 @@ def calculatePoints(letters_played) :
         return 0
 
     else :
-        print( '  A WORD HAS BEEN PLAYED')
+        #print( '  A WORD HAS BEEN PLAYED')
         all_x = []
         all_y = []
 
@@ -274,7 +275,7 @@ def calculatePoints(letters_played) :
         delta_y = max_y - min_y
 
         if delta_x == 0 : #TODO
-            print('  VERTICAL WORD')  
+            #print('  VERTICAL WORD')  
 
             #find first letter
             start_y = min_y
@@ -286,67 +287,99 @@ def calculatePoints(letters_played) :
             while( ( (end_y + 1) <= TILE_PER_BOARD_COLUMN-1) and (board_state[min_x][end_y + 1] != '?') ) :
                 end_y = end_y + 1
 
-            #store word just created
-            main_word = ''
-            word_multiplier = 1
-            word_score = 0
-
-            for it_y in range( start_y, end_y+1 ) :
-                letter = board_state[min_x][it_y]
-                main_word += letter
-                if ((min_x, it_y) in letters_played ): #letters just played
-                    #calculate points for each letter
-                    bonus = LAYOUT[min_x][it_y]
-                    if bonus == 0 : #start_tile
-                        word_multiplier *= 2
-                        bonus = 1
-                    elif bonus == 4:
-                        word_multiplier *= 2
-                        bonus = 1
-                    elif bonus == 5:
-                        word_multiplier *= 3
-                        bonus = 1
-
-                    new_letter_points = POINTS[letter]
-                    word_score = word_score + (bonus * new_letter_points)
-
-                else : #old letters
-                    old_letter_points = POINTS[letter]
-                    word_score = word_score + old_letter_points
-                    
-            word_score = word_score * word_multiplier
-
             words_and_scores = []
-            words_and_scores.append([main_word, word_score])
+
+            if ( end_y > start_y ) : #prevent one letter word
+                #FIRST PASSAGE
+                #store word just created
+                new_word = ''
+                new_word_multiplier = 1
+                new_word_score = 0
+
+                for it_y in range( start_y, end_y+1 ) :
+                    letter = board_state[min_x][it_y]
+                    new_word += letter
+                    if ((min_x, it_y) in letters_played ): #letters just played
+                        #calculate points for each letter
+                        bonus = LAYOUT[min_x][it_y]
+                        if bonus == 0 : #start_tile
+                            new_word_multiplier *= 2
+                            bonus = 1
+                        elif bonus == 4:
+                            new_word_multiplier *= 2
+                            bonus = 1
+                        elif bonus == 5:
+                            new_word_multiplier *= 3
+                            bonus = 1
+
+                        new_letter_points = POINTS[letter]
+                        new_word_score = new_word_score + (bonus * new_letter_points)
+
+                    else : #old letters
+                        old_letter_points = POINTS[letter]
+                        new_word_score = new_word_score + old_letter_points
+                        
+                new_word_score = new_word_score * new_word_multiplier
+                words_and_scores.append([new_word, new_word_score])
+
+
+            #SECOND PASSAGE
+            for it_y in range( start_y, end_y+1 ) : #TO TEST
+                #check for horizontal words
+                it_x = min_x
+                if (it_x, it_y) in (letters_played) : #prevent to count already existing words
+
+                    condition_1 = ( (it_x - 1) >= 0 ) and ( board_state[it_x-1][it_y] != '?' )
+                    condition_2 = ( (it_x + 1) <= TILE_PER_BOARD_COLUMN-1 ) and ( board_state[it_x+1][it_y] != '?' )  
+                    if ( condition_1  or condition_2 ) :
+                        #print('there is another word')
+                        old_word = ''
+                        old_word_score = 0
+
+                        while( ( (it_x - 1) >= 0) and (board_state[it_x-1][it_y] != '?') ) : #go to the begining of the word
+                            it_x = it_x - 1
+
+                        while( ( (it_x) <= TILE_PER_BOARD_COLUMN-1) and (board_state[it_x][it_y] != '?') ) : #go to the end of the word
+
+                            old_letter = board_state[it_x][it_y]
+                            old_word += old_letter
+
+                            old_word_multiplier = 1
+
+                            if (it_x, it_y) in (letters_played) :
+
+                                bonus = LAYOUT[it_x][it_y]
+
+                                if bonus == 0 : #start_tile
+                                    old_word_multiplier *= 2
+                                    bonus = 1
+                                elif bonus == 4:
+                                    old_word_multiplier *= 2
+                                    bonus = 1
+                                elif bonus == 5:
+                                    old_word_multiplier *= 3
+                                    bonus = 1
+
+                                old_word_score += POINTS[old_letter] * bonus
+
+                            else :
+                                old_word_score += POINTS[old_letter]
+                            
+                            it_x = it_x + 1
+
+                        old_word_score = old_word_score * old_word_multiplier
+                        words_and_scores.append([old_word, old_word_score])
+
+            total_score = 0 #TEMP
 
             for association in words_and_scores :
-                print('Word ', association[0], ' gives ', association[1], ' points' )
+                print('Word "', association[0], '" gives ', association[1], ' points' )
+                total_score += association[1]
+            
+            print ('total_score : ', total_score)
 
-            for it_y in range( start_y, end_y+1 ) :
-                #check for horizontal words
-                if (min_x, it_y) in (letters_played) : #prevent to count already existing words
-                    condition_1 = ( (min_x - 1) >= 0 ) and ( board_state[min_x-1][it_y] != '?' )
-                    condition_2 = ( (min_x + 1) <= TILE_PER_BOARD_COLUMN-1 ) and ( board_state[min_x+1][it_y] != '?' )  
-                    if ( condition_1  or condition_2 ) :
-
-                        print('there is another word')
-
-                        #TODO
-
-                        while( ( (min_x - 1) >= 0) and (board_state[min_x][start_y - 1] != '?') ) :
-
-                        while( ( (end_y + 1) <= TILE_PER_BOARD_COLUMN-1) and (board_state[min_x][end_y + 1] != '?') ) :
-               
-
-                        #TODO
-
-
-
-
-
-
-
-            return word_score #TODO : to change
+            #TODO : add a method to display score
+            return total_score #TODO : to change the interface
 
         else :
             print('  HORIZONTAL WORD') 
