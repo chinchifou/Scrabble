@@ -3,8 +3,8 @@
 
 #___BASIC OPTIONS___
 
-LANGUAGE = 'french' #choose your language set among 'french' or 'english' ('english' if non given)
-PLAYERS_NAME = ['Tom', 'Jerry', 'The Cheese', 'Gandma']
+LANGUAGE = 'english' #choose your language set among 'french' or 'english' ('english' if non given)
+PLAYERS_NAME = ['Titi', 'Rominet']
 
 
 #___ADVANCED OPTIONS___
@@ -15,27 +15,26 @@ LETTERS_PER_HAND = 7
 #DICTIONARIES
 #TODO ADD PROPER ENGLISH DICTIONARY
 #ENGLISH
-english_letters = [] #total length must be 102
-for i in range(15):
+english_letters = [] #total length must be 100
+for i in range(12):
 	english_letters.append('E')
 for i in range(9):
-	english_letters.append('A')
-for i in range(8):
 	english_letters.append('I')
+for i in range(8):
+	english_letters.append('O')
 for i in range(6):
 	english_letters.append('N')
-	english_letters.append('O')
 	english_letters.append('R')
-	english_letters.append('S')
 	english_letters.append('T')
+for i in range(4) :
+	english_letters.append('S')
 	english_letters.append('U')
-for i in range(5):
 	english_letters.append('L')
-for i in range(3):
 	english_letters.append('D')
-	english_letters.append('M')
-for i in range(2):
+for i in range(3):
 	english_letters.append('G')
+for i in range(2):	
+	english_letters.append('M')
 	english_letters.append('B')
 	english_letters.append('C')
 	english_letters.append('P')
@@ -43,12 +42,12 @@ for i in range(2):
 	english_letters.append('H')
 	english_letters.append('V')
 	english_letters.append('*')
+	english_letters.append('W')
+	english_letters.append('Y')
 english_letters.append('J')
 english_letters.append('Q')
 english_letters.append('K')
-english_letters.append('W')
 english_letters.append('X')
-english_letters.append('Y')
 english_letters.append('Z')
 
 #FRENCH
@@ -184,6 +183,10 @@ LAYOUT = [
 if LANGUAGE == 'french' :
 	BAG_OF_LETTERS = french_letters #choose current dictionary
 	POINTS = french_points #choose points attributed per letter
+
+elif LANGUAGE == 'english' :
+	BAG_OF_LETTERS = english_letters
+	POINTS = english_points
 
 elif LANGUAGE == 'custom': #create your custom mix inside this one
 	BAG_OF_LETTERS = french_letters
