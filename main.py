@@ -76,7 +76,10 @@ letter_from_board = False
 letters_just_played = {} #format {'a' : (x, y)}
 
 last_words_and_scores = []
-last_pos_of_clic = [-1,-1]
+
+clock = pygame.time.Clock()
+timer = clock.tick()
+delta_clic = [0.5, 0.5]
 
 #TODO : BACKUP TO ALLOW RESET
 board_state_at_turns_begining = board_state 
@@ -729,12 +732,10 @@ while running:
             pygame.display.flip()
 
         elif ( event.type == MOUSEBUTTONDOWN  and event.button == 1 ) : #left clic
+            timer = clock.tick()
 
             cursor_x = event.pos[0]
             cursor_y = event.pos[1]
-
-            last_pos_of_clic[0] = cursor_x
-            last_pos_of_clic[1] = cursor_y
 
             if current_action == 'SELECT_A_LETTER' :
 
@@ -742,6 +743,9 @@ while running:
 
                     tile_x_board = floor( (cursor_x - delta)/tile_size)
                     tile_y_board = floor( (cursor_y - delta)/tile_size)
+
+                    delta_clic[0] = ( (cursor_x - delta)/tile_size) - tile_x_board
+                    delta_clic[1] = ( (cursor_y - delta)/tile_size) - tile_y_board
 
                     selected_letter = board_state[tile_x_board][tile_y_board]
                     #check if the letter has just been played by this player or not
@@ -758,7 +762,13 @@ while running:
                 elif cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
 
                     delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+                    delta_hand_y = delta + 2*tile_size
+
                     tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
+                    tile_y_hand = floor( (cursor_y - delta_hand_y)/tile_size)
+
+                    delta_clic[0] = ( (cursor_x - delta_hand_x)/tile_size) - tile_x_hand
+                    delta_clic[1] = ( (cursor_y - delta_hand_y)/tile_size) - tile_y_hand
 
                     if current_player.hand[tile_x_hand] != NO_LETTER :
 
@@ -814,10 +824,12 @@ while running:
 
         elif ( event.type == MOUSEBUTTONUP and event.button == 1 ) :
 
+            timer = clock.tick()
+
             cursor_x = event.pos[0]
             cursor_y = event.pos[1]
 
-            if ( ( last_pos_of_clic[0] != cursor_x ) and ( last_pos_of_clic[1] != cursor_y ) ) : #not a simple fast clic
+            if ( timer > 100 )  : #not a simple fast clic
 
                 if current_action == 'PLAY_A_LETTER' :
 
@@ -863,26 +875,22 @@ while running:
                             current_action = ACTIONS[0] #next action : select a letter
 
 
-        else : #not a clic
-            #TODO : TO IMPROVE to support windowed mode 
-            #         pos = pygame.mouse.get_pos() ?
-            #if  ( (current_action == 'PLAY_A_LETTER') and (ALLOW_TILE_FOLLOW_CURSOR == True) and (FULLSCREEN == True) ) :
-            if  ( (current_action == 'PLAY_A_LETTER') and (ALLOW_TILE_FOLLOW_CURSOR == True) ) : #TEMP
-                #TO IMPROVE
-                if ( not (event.type in (KEYDOWN, KEYUP, MOUSEBUTTONDOWN, MOUSEBUTTONUP) ) ):
+        elif ( not (event.type in (KEYDOWN, KEYUP, MOUSEBUTTONDOWN, MOUSEBUTTONUP) ) )  : #not a clic
 
-                    #TODO To add :switch letter order if in hand
+            if ( (current_action == 'PLAY_A_LETTER') and (ALLOW_TILE_FOLLOW_CURSOR == True) ) :
 
-                    cursor_x = event.pos[0]
-                    cursor_y = event.pos[1]
+                #TODO To add :switch letter order if in hand
+                mouse_pos = pygame.mouse.get_pos()
+                cursor_x = mouse_pos[0]
+                cursor_y = mouse_pos[1]
 
-                    drawBoardAndMenu()
-                    window.blit( letters[selected_letter], (cursor_x - 0.5*tile_size, cursor_y - 0.5 * tile_size) ) #TEMP?
-                    drawTurnInfo(current_player)
-                    drawHand(current_player.hand)
-                    drawScores()
-                    drawSumaryEndTurn(last_words_and_scores)
-                    pygame.display.flip()
+                drawBoardAndMenu()
+                window.blit( letters[selected_letter], (cursor_x - delta_clic[0]*tile_size, cursor_y - delta_clic[1]*tile_size) ) #TEMP?
+                drawTurnInfo(current_player)
+                drawHand(current_player.hand)
+                drawScores()
+                drawSumaryEndTurn(last_words_and_scores)
+                pygame.display.flip()
 
 
 

@@ -5,11 +5,11 @@
 
 #___BASIC OPTIONS___
 
-FULLSCREEN = True #enable Fullscreen mode or not
+FULLSCREEN = False #enable Fullscreen mode or not
 
 RESIZABLE = True #enable the Window to be resizable or not
 
-RESOLUTION_AUTO = True #let the application find the best resolution (current resolution of the monitor)
+RESOLUTION_AUTO = False #let the application find the best resolution (current resolution of the monitor)
 
 ALLOW_TILE_FOLLOW_CURSOR = True #ONLY WORKS IN FULLSCREEN (crash if cursor out of the game window)
 
@@ -30,10 +30,3 @@ DOUBLEBUF = True #enable double buffer (recommended for HWSURFACE or OPENGL)
 HWSURFACE = True #hardware accelerated (only in FULLSCREEN)
 
 #NOTE : DO NOT SUPPORT "OPENGL and NOFRAME arguments from Pygame API
-
-
-#TO DO : Remove
-# /// DO NOT REMOVE ///
-#force coherence of local configuration
-#RESIZABLE = False if FULLSCREEN == True else RESIZABLE
-#HWSURFACE = False if FULLSCREEN == False else HWSURFACE
