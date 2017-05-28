@@ -178,6 +178,7 @@ def refreshWindow(window, width, heigh) :
             window = pygame.display.set_mode( (width, heigh))
     return window
 
+#DRAW FUNCTIONS
 #Draw playing board
 def drawBoardAndMenu() :
     x_pos = 0 + delta
@@ -212,7 +213,6 @@ def drawBoardAndMenu() :
                 window.blit( letters[ board_state[row][column] ], (delta + row * tile_size, delta + column * tile_size) )
    #draw menu
     window.blit(menu, (board_size, 0))
-
 
 #Display on top of the screen the player who is currently playing
 def drawTurnInfo(player) :
@@ -252,7 +252,6 @@ def drawScores() :
             window.blit(player_score_text, (delta_x, delta_y) )
             delta_y += line_heigh
 
-
 def drawSumaryEndTurn(words_and_scores) :
 
     line_heigh = 0.6 * tile_size
@@ -283,7 +282,6 @@ def drawSumaryEndTurn(words_and_scores) :
         window.blit(text, (delta_x, delta_y) )
 
 
-
 def cursorIsOnBoard(cursor_x, cursor_y) :
     tile_x = floor( (cursor_x - delta)/tile_size)
     tile_y = floor( (cursor_y - delta)/tile_size)
@@ -307,14 +305,14 @@ def cursorIsOnHand(cursor_x, cursor_y, hand) : #TO DEBUG ?? use collidepoint
 def idTileFromHand(x) :
     return (x - (2 + TILE_PER_BOARD_COLUMN + 2) )
 
-
 def emptySlot(x,y) :
     if board_state[x][y] == '?':
         return True
     else :
         return False
 
-#NEW
+
+#CALCULATE POINTS
 def calculatePoints(letters_played) :
     #FORMAT letters_just_played {'a' : (x, y)}
     if len(letters_played) == 0 :
@@ -553,7 +551,6 @@ def calculatePoints(letters_played) :
             return words_and_scores #TODO : to change the interface 
 
         
-
 #RELOAD IMAGES
 def reloadTiles() :
     return {
@@ -601,6 +598,7 @@ def reloardBoard() :
 
 def reloadMenu() :
     return pygame.image.load('./images/menu.png')
+
 
 #UPDATES DUE TO WINDOW RESIZING
 def updateZoomFactor(width, heigh) :
