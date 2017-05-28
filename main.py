@@ -178,7 +178,6 @@ def refreshWindow(window, width, heigh) :
             window = pygame.display.set_mode( (width, heigh))
     return window
 
-#DRAW FUNCTIONS
 #Draw playing board
 def drawBoardAndMenu() :
     x_pos = 0 + delta
@@ -213,6 +212,7 @@ def drawBoardAndMenu() :
                 window.blit( letters[ board_state[row][column] ], (delta + row * tile_size, delta + column * tile_size) )
    #draw menu
     window.blit(menu, (board_size, 0))
+
 
 #Display on top of the screen the player who is currently playing
 def drawTurnInfo(player) :
@@ -252,6 +252,7 @@ def drawScores() :
             window.blit(player_score_text, (delta_x, delta_y) )
             delta_y += line_heigh
 
+
 def drawSumaryEndTurn(words_and_scores) :
 
     line_heigh = 0.6 * tile_size
@@ -280,6 +281,7 @@ def drawSumaryEndTurn(words_and_scores) :
 
         text = font.render('  Nothing played',1,(143,144,138))
         window.blit(text, (delta_x, delta_y) )
+
 
 
 def cursorIsOnBoard(cursor_x, cursor_y) :
@@ -312,7 +314,7 @@ def emptySlot(x,y) :
     else :
         return False
 
-#CALCULATE POINTS
+#NEW
 def calculatePoints(letters_played) :
     #FORMAT letters_just_played {'a' : (x, y)}
     if len(letters_played) == 0 :
@@ -551,6 +553,7 @@ def calculatePoints(letters_played) :
             return words_and_scores #TODO : to change the interface 
 
         
+
 #RELOAD IMAGES
 def reloadTiles() :
     return {
@@ -612,100 +615,6 @@ def updateMenuWidth() :
     return round( MENU_WIDTH_IN_TILES * tile_size)
 def updateMenuHeigh() :
     return round( MENU_HEIGH_IN_TILES * tile_size)
-
-#GAMES MOVES
-def selectLetter(cursor_x, cursor_y) :
-
-    print('select letter')
-
-    if cursorIsOnBoard(cursor_x, cursor_y) :
-        print('on board')
-
-        tile_x_board = floor( (cursor_x - delta)/tile_size)
-        tile_y_board = floor( (cursor_y - delta)/tile_size)
-
-        delta_clic[0] = ( (cursor_x - delta)/tile_size) - tile_x_board
-        delta_clic[1] = ( (cursor_y - delta)/tile_size) - tile_y_board
-
-        selected_letter = board_state[tile_x_board][tile_y_board]
-
-        #check if the letter has just been played by this player or not
-        if ( selected_letter in(letters_just_played.values()) and ( (tile_x_board, tile_y_board) in( letters_just_played.keys() ) ) ) :
-
-            letter_from_board = True
-            del(letters_just_played[(tile_x_board, tile_y_board)])
-            board_state[tile_x_board][tile_y_board] = '?'
-            current_action = ACTIONS[1] #next action : play a letter
-        else :
-            selected_letter = ''
-
-    elif cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
-        print('on hand')
-
-        delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
-        delta_hand_y = delta + 2*tile_size
-
-        tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
-        tile_y_hand = floor( (cursor_y - delta_hand_y)/tile_size)
-
-        delta_clic[0] = ( (cursor_x - delta_hand_x)/tile_size) - tile_x_hand
-        delta_clic[1] = ( (cursor_y - delta_hand_y)/tile_size) - tile_y_hand
-
-        if current_player.hand[tile_x_hand] != NO_LETTER :
-
-            selected_letter = current_player.hand[tile_x_hand]
-            current_player.hand[tile_x_hand] = NO_LETTER #ADDED
-            letter_from_board = False
-            current_action = ACTIONS[1] #next action : play a letter
-    return 0
-
-
-def playLetter(cursor_x, cursor_y) :
-
-    if cursorIsOnBoard(cursor_x, cursor_y) :
-
-        tile_x_board = floor( (cursor_x - delta)/tile_size)
-        tile_y_board = floor( (cursor_y - delta)/tile_size)
-
-        if emptySlot(tile_x_board,tile_y_board) : 
-
-            board_state[tile_x_board][tile_y_board] = selected_letter
-
-            drawBoardAndMenu()
-            drawTurnInfo(current_player)
-            drawHand(current_player.hand)
-            drawScores()
-            drawSumaryEndTurn(last_words_and_scores)
-            pygame.display.flip()
-
-            letters_just_played[(tile_x_board, tile_y_board)] = selected_letter
-            selected_letter = ''
-            current_action = ACTIONS[0]
-
-    elif cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
-
-        delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
-        tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
-
-        underneath_letter = current_player.hand[tile_x_hand]
-
-        if underneath_letter == NO_LETTER :
-
-            current_player.hand[tile_x_hand] = selected_letter
-
-            drawBoardAndMenu()
-            drawTurnInfo(current_player)
-            drawHand(current_player.hand)
-            drawScores()
-            drawSumaryEndTurn(last_words_and_scores)
-            pygame.display.flip()
-
-            selected_letter = ''
-            current_action = ACTIONS[0] #next action : select a letter
-            
-    return 0
-
-
 
 
 
@@ -830,11 +739,87 @@ while running:
 
             if current_action == 'SELECT_A_LETTER' :
 
-                selectLetter(cursor_x, cursor_y)
+                if cursorIsOnBoard(cursor_x, cursor_y) :
+
+                    tile_x_board = floor( (cursor_x - delta)/tile_size)
+                    tile_y_board = floor( (cursor_y - delta)/tile_size)
+
+                    delta_clic[0] = ( (cursor_x - delta)/tile_size) - tile_x_board
+                    delta_clic[1] = ( (cursor_y - delta)/tile_size) - tile_y_board
+
+                    selected_letter = board_state[tile_x_board][tile_y_board]
+                    #check if the letter has just been played by this player or not
+                    if ( selected_letter in(letters_just_played.values()) and ( (tile_x_board, tile_y_board) in( letters_just_played.keys() ) ) ) :
+
+                        letter_from_board = True
+                        del(letters_just_played[(tile_x_board, tile_y_board)])
+                        board_state[tile_x_board][tile_y_board] = '?'
+                        current_action = ACTIONS[1] #next action : play a letter
+
+                    else :
+                        selected_letter = ''
+
+                elif cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
+
+                    delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+                    delta_hand_y = delta + 2*tile_size
+
+                    tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
+                    tile_y_hand = floor( (cursor_y - delta_hand_y)/tile_size)
+
+                    delta_clic[0] = ( (cursor_x - delta_hand_x)/tile_size) - tile_x_hand
+                    delta_clic[1] = ( (cursor_y - delta_hand_y)/tile_size) - tile_y_hand
+
+                    if current_player.hand[tile_x_hand] != NO_LETTER :
+
+                        selected_letter = current_player.hand[tile_x_hand]
+                        current_player.hand[tile_x_hand] = NO_LETTER #ADDED
+                        letter_from_board = False
+                        current_action = ACTIONS[1] #next action : play a letter
+
 
             elif current_action == 'PLAY_A_LETTER' :
 
-                playLetter(cursor_x, cursor_y)
+                if cursorIsOnBoard(cursor_x, cursor_y) :
+
+                    tile_x_board = floor( (cursor_x - delta)/tile_size)
+                    tile_y_board = floor( (cursor_y - delta)/tile_size)
+
+                    if emptySlot(tile_x_board,tile_y_board) : 
+
+                        board_state[tile_x_board][tile_y_board] = selected_letter
+
+                        drawBoardAndMenu()
+                        drawTurnInfo(current_player)
+                        drawHand(current_player.hand)
+                        drawScores()
+                        drawSumaryEndTurn(last_words_and_scores)
+                        pygame.display.flip()
+
+                        letters_just_played[(tile_x_board, tile_y_board)] = selected_letter
+                        selected_letter = ''
+                        current_action = ACTIONS[0]
+
+                elif cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
+
+                    delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+                    tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
+
+                    underneath_letter = current_player.hand[tile_x_hand]
+
+                    if underneath_letter == NO_LETTER :
+
+                        current_player.hand[tile_x_hand] = selected_letter #ADDED
+
+                        drawBoardAndMenu()
+                        drawTurnInfo(current_player)
+                        drawHand(current_player.hand)
+                        drawScores()
+                        drawSumaryEndTurn(last_words_and_scores)
+                        pygame.display.flip()
+
+                        selected_letter = ''
+                        current_action = ACTIONS[0] #next action : select a letter
 
 
         elif ( event.type == MOUSEBUTTONUP and event.button == 1 ) :
@@ -848,7 +833,47 @@ while running:
 
                 if current_action == 'PLAY_A_LETTER' :
 
-                    playLetter(cursor_x, cursor_y)
+                    if cursorIsOnBoard(cursor_x, cursor_y) :
+
+                        tile_x_board = floor( (cursor_x - delta)/tile_size)
+                        tile_y_board = floor( (cursor_y - delta)/tile_size)
+
+                        if emptySlot(tile_x_board,tile_y_board) : 
+
+                            board_state[tile_x_board][tile_y_board] = selected_letter
+
+                            drawBoardAndMenu()
+                            drawTurnInfo(current_player)
+                            drawHand(current_player.hand)
+                            drawScores()
+                            drawSumaryEndTurn(last_words_and_scores)
+                            pygame.display.flip()
+
+                            letters_just_played[(tile_x_board, tile_y_board)] = selected_letter
+                            selected_letter = ''                  
+                            current_action = ACTIONS[0] #Next action : select a letter
+
+                    elif cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
+
+                        delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+                        tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
+
+                        underneath_letter = current_player.hand[tile_x_hand]
+
+                        if underneath_letter == NO_LETTER :
+
+                            current_player.hand[tile_x_hand] = selected_letter #ADDED
+
+                            drawBoardAndMenu()
+                            drawTurnInfo(current_player)
+                            drawHand(current_player.hand)
+                            drawScores()
+                            drawSumaryEndTurn(last_words_and_scores)
+                            pygame.display.flip()
+
+                            selected_letter = ''
+                            current_action = ACTIONS[0] #next action : select a letter
+
 
         elif ( not (event.type in (KEYDOWN, KEYUP, MOUSEBUTTONDOWN, MOUSEBUTTONUP) ) )  : #not a clic
 
@@ -866,6 +891,7 @@ while running:
                 drawScores()
                 drawSumaryEndTurn(last_words_and_scores)
                 pygame.display.flip()
+
 
 
 
