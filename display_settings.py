@@ -3,6 +3,7 @@
 #change values bellow to change game configuration (please avoid doing this at runtime)
 
 
+
 #___BASIC OPTIONS___
 
 FULLSCREEN = False #enable Fullscreen mode or not
@@ -12,6 +13,7 @@ RESIZABLE = True #enable the Window to be resizable or not
 RESOLUTION_AUTO = False #let the application find the best resolution (current resolution of the monitor)
 
 ALLOW_TILE_FOLLOW_CURSOR = True #ONLY WORKS IN FULLSCREEN (crash if cursor out of the game window)
+
 
 
 #___CUSTOM RESOLUTIONS___

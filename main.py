@@ -269,9 +269,14 @@ def drawSumaryEndTurn(words_and_scores) :
         delta_y += 2*line_heigh
 
         for association in words_and_scores :
-            text = font.render('  Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,(143,144,138))
-            window.blit(text, (delta_x, delta_y) )
-            delta_y += line_heigh
+            if association[0] == '!! SCRABBLE !!':
+                text = font.render('  !! SCRABBLE gives 50 points !!',1,(243,112,118))
+                window.blit(text, (delta_x, delta_y) )
+                delta_y += line_heigh
+            else:
+                text = font.render('  Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,(143,144,138))
+                window.blit(text, (delta_x, delta_y) )
+                delta_y += line_heigh
     else :
         delta_y -= line_heigh
         header = font.render('Last turn actions :' ,1 ,(143,144,138) )
@@ -315,12 +320,14 @@ def emptySlot(x,y) :
 #CALCULATE POINTS
 def calculatePoints(letters_played) :
     #FORMAT letters_just_played {'a' : (x, y)}
+    print ('len letters played', len(letters_played))
+
     if len(letters_played) == 0 :
         print( '  NOTHING PLAYED')
         return []
 
     else :
-        #print( '  A WORD HAS BEEN PLAYED')
+        #__init__
         all_x = []
         all_y = []
 
@@ -335,10 +342,16 @@ def calculatePoints(letters_played) :
 
         delta_x = max_x - min_x
         delta_y = max_y - min_y
+        #__init__
 
-        if delta_x == 0 : #TODO
-            #print('  VERTICAL WORD')  
+        words_and_scores = []
 
+        if len(letters_played) == 7 : #is a SCRABBLE ?
+            words_and_scores.append(['!! SCRABBLE !!', 50])
+            
+        if delta_x == 0 :
+            print('  HORIZONTAL WORD')
+  
             #find first letter
             start_y = min_y
             while( ( (start_y - 1) >= 0) and (board_state[min_x][start_y - 1] != '?') ) :
@@ -349,7 +362,7 @@ def calculatePoints(letters_played) :
             while( ( (end_y + 1) <= TILE_PER_BOARD_COLUMN-1) and (board_state[min_x][end_y + 1] != '?') ) :
                 end_y = end_y + 1
 
-            words_and_scores = []
+            #words_and_scores = []
 
             if ( end_y > start_y ) : #prevent one letter word
                 #FIRST PASSAGE
@@ -386,7 +399,7 @@ def calculatePoints(letters_played) :
 
 
             #SECOND PASSAGE
-            for it_y in range( start_y, end_y+1 ) : #TO TEST
+            for it_y in range( start_y, end_y+1 ) :
                 #check for horizontal words
                 it_x = min_x
                 if (it_x, it_y) in (letters_played) : #prevent to count already existing words
@@ -432,7 +445,7 @@ def calculatePoints(letters_played) :
                         old_word_score = old_word_score * old_word_multiplier
                         words_and_scores.append([old_word, old_word_score])
 
-            total_score = 0 #TEMP
+            total_score = 0 
 
             for association in words_and_scores :
                 print('Word "', association[0], '" gives ', association[1], ' points' )
@@ -440,10 +453,10 @@ def calculatePoints(letters_played) :
             
             print ('total_score : ', total_score)
 
-            #TODO : add a method to display score
-            return words_and_scores #TODO : to change the interface
+            return words_and_scores 
 
-        else : #IN PROGRESS : pb wit double/triple letters 
+
+        else : 
             print('  HORIZONTAL WORD')
 
             #find first letter
@@ -455,8 +468,6 @@ def calculatePoints(letters_played) :
             end_x = max_x
             while( ( (end_x + 1) <= TILE_PER_BOARD_COLUMN-1) and (board_state[end_x + 1][min_y] != '?') ) :
                 end_x = end_x + 1
-
-            words_and_scores = []
 
             if ( end_x > start_x ) : #prevent one letter word
                 #FIRST PASSAGE
@@ -493,7 +504,7 @@ def calculatePoints(letters_played) :
 
 
             #SECOND PASSAGE
-            for it_x in range( start_x, end_x+1 ) : #TO TEST
+            for it_x in range( start_x, end_x+1 ) :
                 #check for horizontal words
                 it_y = min_y
                 if (it_x, it_y) in (letters_played) : #prevent to count already existing words
@@ -547,8 +558,7 @@ def calculatePoints(letters_played) :
             
             print ('total_score : ', total_score)
 
-            #TODO : add a method to display score
-            return words_and_scores #TODO : to change the interface 
+            return words_and_scores
 
         
 #RELOAD IMAGES
