@@ -915,7 +915,7 @@ while running:
 
         elif ( not (event.type in (KEYDOWN, KEYUP, MOUSEBUTTONDOWN, MOUSEBUTTONUP) ) )  : #not a clic
 
-            if ( (current_action == 'PLAY_A_LETTER') and (ALLOW_TILE_FOLLOW_CURSOR == True) ) :
+            if ( current_action == 'PLAY_A_LETTER' ) :
 
                 #TODO To add :switch letter order if in hand
                 mouse_pos = pygame.mouse.get_pos()
