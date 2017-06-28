@@ -217,12 +217,14 @@ def drawBoardAndMenu() :
 #Display on top of the screen the player who is currently playing
 def drawTurnInfo(player) :
     delta_info_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
-    delta_info_y = delta
+    delta_info_y = 1.3*delta
 
-    font = pygame.font.Font("./images/defaultFont.ttf", tile_size)
+    #DEBUG
+    #font = pygame.font.Font("./images/defaultFont.ttf", tile_size)
+    font = pygame.font.SysFont("Calibri", floor(0.9*tile_size))
     font.set_bold(1)
 
-    test_text = font.render(player.name+"'S TURN",1,(143,144,138))
+    test_text = font.render(player.name+"'s turn",1,(143,144,138))
     window.blit(test_text,(delta_info_x, delta_info_y))
 
 def drawHand(hand) :
@@ -235,15 +237,15 @@ def drawHand(hand) :
 
 def drawScores() :
     if(len(PLAYERS) <= 8) :
-        #a_sys_font = pygame.font.SysFont("Arial", 60)
         line_heigh = 0.6 * tile_size
-        font = pygame.font.Font("./images/defaultFont.ttf", floor(0.6*tile_size))
-        font.set_bold(1)
+        font = pygame.font.SysFont("Calibri", floor(0.6*tile_size))
 
         delta_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
         delta_y = delta + (TILE_PER_BOARD_COLUMN*tile_size) - (len(PLAYERS)*line_heigh) - 2*line_heigh
 
-        header = font.render('SCORES :',1,(143,144,138))
+        font.set_bold(1)
+        header = font.render('Scores :',1,(143,144,138))
+        font.set_bold(0)
         window.blit(header, (delta_x, delta_y) )
         delta_y += 2*line_heigh
 
@@ -255,18 +257,21 @@ def drawScores() :
 def drawSumaryEndTurn(words_and_scores) :
 
     line_heigh = 0.6 * tile_size
-    font = pygame.font.Font("./images/defaultFont.ttf", floor(line_heigh))
-    font.set_bold(1)
+    #font = pygame.font.Font("./images/defaultFont.ttf", floor(line_heigh))   
+    font = pygame.font.SysFont("Calibri", floor(line_heigh))
 
     delta_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
     delta_y = delta + (TILE_PER_BOARD_COLUMN*tile_size)
     delta_y = delta_x - (len(PLAYERS)*line_heigh) - 11*line_heigh - len(words_and_scores)*line_heigh
     
     if len(words_and_scores) > 0 :
-
+        font.set_bold(1)
         header = font.render('Last turn actions :' ,1 ,(143,144,138) )
+
         window.blit(header, (delta_x, delta_y) )
         delta_y += 2*line_heigh
+
+        font.set_bold(0)
 
         for association in words_and_scores :
             if association[0] == '!! SCRABBLE !!':
@@ -279,10 +284,12 @@ def drawSumaryEndTurn(words_and_scores) :
                 delta_y += line_heigh
     else :
         delta_y -= line_heigh
+        font.set_bold(1)
         header = font.render('Last turn actions :' ,1 ,(143,144,138) )
         window.blit(header, (delta_x, delta_y) )
         delta_y += 2*line_heigh
 
+        font.set_bold(0)
         text = font.render('  Nothing played',1,(143,144,138))
         window.blit(text, (delta_x, delta_y) )
 
