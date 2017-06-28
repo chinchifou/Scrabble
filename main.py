@@ -18,7 +18,6 @@ from random import randint
 
 #launch Pygame
 pygame.init()
-font = pygame.font.Font("./images/defaultFont.ttf", 60)
 running = True
 print ('Game is running')
 
@@ -51,6 +50,7 @@ NO_LETTER = '_'
 #CHANGING WITH WINDOW RESIZING
 zoom_factor = float(settings.WIDTH / 1920.0) #reference resolution is 1920*1080
 window =  pygame.display.set_mode( (0, 0) )
+background = window.copy()
 
 tile_size = round(TILE_SIZE * zoom_factor)
 delta = 1.5 * tile_size #distance of board from top left corner
@@ -58,9 +58,6 @@ delta = 1.5 * tile_size #distance of board from top left corner
 board_size = round(BOARD_SIZE_IN_TILES * tile_size)
 menu_width = round(MENU_WIDTH_IN_TILES * tile_size)
 menu_heigh = round(MENU_HEIGH_IN_TILES * tile_size)
-
-font = pygame.font.Font("./images/defaultFont.ttf", tile_size)
-
 
 
 #CHANGING DURING THE GAME
@@ -180,7 +177,7 @@ def refreshWindow(window, width, heigh) :
 
 #DRAW FUNCTIONS
 #Draw playing board
-def drawBoardAndMenu() :
+def drawBoard() :
     x_pos = 0 + delta
     y_pos = 0 + delta
 
@@ -219,11 +216,8 @@ def drawTurnInfo(player) :
     delta_info_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
     delta_info_y = 1.3*delta
 
-    #DEBUG
-    #font = pygame.font.Font("./images/defaultFont.ttf", tile_size)
     font = pygame.font.SysFont("Calibri", floor(0.9*tile_size))
     font.set_bold(1)
-
     test_text = font.render(player.name+"'s turn",1,(143,144,138))
     window.blit(test_text,(delta_info_x, delta_info_y))
 
@@ -257,7 +251,6 @@ def drawScores() :
 def drawSumaryEndTurn(words_and_scores) :
 
     line_heigh = 0.6 * tile_size
-    #font = pygame.font.Font("./images/defaultFont.ttf", floor(line_heigh))   
     font = pygame.font.SysFont("Calibri", floor(line_heigh))
 
     delta_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
@@ -656,6 +649,12 @@ current_action = ACTIONS[0] #select a letter
 hand_at_turns_begining = current_player.hand
 board_state_at_turns_begining = board_state
 
+#init background for display
+drawBoard()
+drawTurnInfo(current_player)
+drawScores()
+background = window.copy()
+
 #___MAIN  GAME LOOP___
 
 while running:
@@ -695,13 +694,14 @@ while running:
             for key in tiles.keys() :
                 tiles[key] = pygame.transform.smoothscale(tiles[key], (tile_size, tile_size) )
 
-            font = pygame.font.Font("./images/defaultFont.ttf", tile_size)
-
-            drawBoardAndMenu() #draw everything on screen
+            drawBoard()        
             drawTurnInfo(current_player)
-            drawHand(current_player.hand)
             drawScores()
             drawSumaryEndTurn(last_words_and_scores)
+
+            background = window.copy() #save background
+
+            drawHand(current_player.hand)
             pygame.display.flip()
 
         #COMMON EVENTS
@@ -739,11 +739,15 @@ while running:
                 current_player.hand.append(bag_of_letters[random_int])
                 del(bag_of_letters[random_int])
 
-            drawBoardAndMenu() #draw everything on screen
+            drawBoard() #draw everything on screen         
             drawTurnInfo(current_player)
-            drawHand(current_player.hand)
             drawScores()
             drawSumaryEndTurn(last_words_and_scores)
+
+            background = window.copy() #NEW 
+
+            drawHand(current_player.hand)
+
             pygame.display.flip()
 
         elif ( event.type == MOUSEBUTTONDOWN  and event.button == 1 ) : #left clic
@@ -771,6 +775,13 @@ while running:
                         board_state[tile_x_board][tile_y_board] = '?'
                         current_action = ACTIONS[1] #next action : play a letter
 
+                        drawBoard()        
+                        drawTurnInfo(current_player)
+                        drawScores()
+                        drawSumaryEndTurn(last_words_and_scores)
+
+                        background = window.copy() #save background
+
                     else :
                         selected_letter = ''
 
@@ -788,7 +799,7 @@ while running:
                     if current_player.hand[tile_x_hand] != NO_LETTER :
 
                         selected_letter = current_player.hand[tile_x_hand]
-                        current_player.hand[tile_x_hand] = NO_LETTER #ADDED
+                        current_player.hand[tile_x_hand] = NO_LETTER
                         letter_from_board = False
                         current_action = ACTIONS[1] #next action : play a letter
 
@@ -804,11 +815,14 @@ while running:
 
                         board_state[tile_x_board][tile_y_board] = selected_letter
 
-                        drawBoardAndMenu()
+                        drawBoard()        
                         drawTurnInfo(current_player)
-                        drawHand(current_player.hand)
                         drawScores()
                         drawSumaryEndTurn(last_words_and_scores)
+
+                        background = window.copy() #save background
+
+                        drawHand(current_player.hand)
                         pygame.display.flip()
 
                         letters_just_played[(tile_x_board, tile_y_board)] = selected_letter
@@ -824,13 +838,16 @@ while running:
 
                     if underneath_letter == NO_LETTER :
 
-                        current_player.hand[tile_x_hand] = selected_letter #ADDED
+                        current_player.hand[tile_x_hand] = selected_letter
 
-                        drawBoardAndMenu()
+                        drawBoard()        
                         drawTurnInfo(current_player)
-                        drawHand(current_player.hand)
                         drawScores()
                         drawSumaryEndTurn(last_words_and_scores)
+
+                        background = window.copy() #save background
+
+                        drawHand(current_player.hand)
                         pygame.display.flip()
 
                         selected_letter = ''
@@ -857,11 +874,14 @@ while running:
 
                             board_state[tile_x_board][tile_y_board] = selected_letter
 
-                            drawBoardAndMenu()
+                            drawBoard()        
                             drawTurnInfo(current_player)
-                            drawHand(current_player.hand)
                             drawScores()
                             drawSumaryEndTurn(last_words_and_scores)
+
+                            background = window.copy() #save background
+
+                            drawHand(current_player.hand)
                             pygame.display.flip()
 
                             letters_just_played[(tile_x_board, tile_y_board)] = selected_letter
@@ -879,11 +899,14 @@ while running:
 
                             current_player.hand[tile_x_hand] = selected_letter #ADDED
 
-                            drawBoardAndMenu()
+                            drawBoard()        
                             drawTurnInfo(current_player)
-                            drawHand(current_player.hand)
                             drawScores()
                             drawSumaryEndTurn(last_words_and_scores)
+
+                            background = window.copy() #save background
+
+                            drawHand(current_player.hand)
                             pygame.display.flip()
 
                             selected_letter = ''
@@ -899,14 +922,10 @@ while running:
                 cursor_x = mouse_pos[0]
                 cursor_y = mouse_pos[1]
 
-                drawBoardAndMenu()
-                window.blit( letters[selected_letter], (cursor_x - delta_clic[0]*tile_size, cursor_y - delta_clic[1]*tile_size) ) #TEMP?
-                drawTurnInfo(current_player)
+                window.blit(background, (0, 0))
                 drawHand(current_player.hand)
-                drawScores()
-                drawSumaryEndTurn(last_words_and_scores)
+                window.blit( letters[selected_letter], (cursor_x - delta_clic[0]*tile_size, cursor_y - delta_clic[1]*tile_size) )
                 pygame.display.flip()
-
 
 
 
