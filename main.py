@@ -13,6 +13,31 @@ from math import floor
 
 from random import randint
 
+''' TODO
+#___GUI INITIALISATION___
+#Font
+line_heigh = 06*tile_size
+
+#TURN INFO
+
+TURN_INFO_X = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+TURN_INFO_Y = 1.3*delta
+
+#TILES IN PLAYER HAND
+
+HAND_X = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+HAND_Y = delta + 2*tile_size
+
+#SCORES
+
+SCORE_X= 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+SCORE_Y = delta + 6*tile_size
+
+#PREVIOUS TURN SUMMARY
+
+TURN_SUMMARY_X = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+TUEN_SUMMARY_Y = delta + 7*tile_size + 2*line_heigh + (len(PLAYERS)*line_heigh) + tile_size
+'''
 
 #___INITIALIZATION___
 
@@ -152,7 +177,7 @@ class Player :
 
 #___FUNCTIONS___
 
-#Game window creation
+#___Game window creation___
 def refreshWindow(window, width, heigh) :
     if settings.FULLSCREEN :
         if settings.DOUBLEBUF :
@@ -175,7 +200,8 @@ def refreshWindow(window, width, heigh) :
             window = pygame.display.set_mode( (width, heigh))
     return window
 
-#DRAW FUNCTIONS
+
+#___DRAW FUNCTIONS___
 #Draw playing board
 def drawBoard() :
     x_pos = 0 + delta
@@ -211,79 +237,92 @@ def drawBoard() :
    #draw menu
     window.blit(menu, (board_size, 0))
 
+
 #Display on top of the screen the player who is currently playing
 def drawTurnInfo(player) :
-    delta_info_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+
+    line_heigh = 0.9*tile_size
+
+    delta_info_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
     delta_info_y = 1.3*delta
 
-    font = pygame.font.SysFont("Calibri", floor(0.9*tile_size))
+    font = pygame.font.SysFont("Calibri", floor(line_heigh))
     font.set_bold(1)
     test_text = font.render(player.name+"'s turn",1,(143,144,138))
     window.blit(test_text,(delta_info_x, delta_info_y))
 
+
 def drawHand(hand) :
-    delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+    delta_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
     delta_hand_y = delta + 2*tile_size
 
     for id_letter in range(len(hand)) :
         if hand[id_letter] != NO_LETTER : #ADDED
             window.blit(letters[hand[id_letter]], (delta_hand_x + id_letter*tile_size , delta_hand_y)) 
 
+
 def drawScores() :
     if(len(PLAYERS) <= 8) :
+
+        delta_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+        delta_y = delta + 6*tile_size
+       
         line_heigh = 0.6 * tile_size
-        font = pygame.font.SysFont("Calibri", floor(0.6*tile_size))
-
-        delta_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
-        delta_y = delta + (TILE_PER_BOARD_COLUMN*tile_size) - (len(PLAYERS)*line_heigh) - 2*line_heigh
-
-        font.set_bold(1)
+        font = pygame.font.SysFont("Calibri", floor(1.1*line_heigh))
+        font.set_bold(1) 
         header = font.render('Scores :',1,(143,144,138))
+
+        font = pygame.font.SysFont("Calibri", floor(0.9*line_heigh))
         font.set_bold(0)
         window.blit(header, (delta_x, delta_y) )
         delta_y += 2*line_heigh
 
         for player in PLAYERS :
-            player_score_text = font.render('  '+player.name+" has "+str(player.points)+" points",1,(143,144,138))
+            if player == current_player :
+                font.set_bold(1)
+                player_score_text = font.render('   '+player.name+" : "+str(player.points),1,(143,144,138))
+            else :
+                font.set_bold(0)
+                player_score_text = font.render('    '+player.name+" : "+str(player.points),1,(143,144,138))
             window.blit(player_score_text, (delta_x, delta_y) )
             delta_y += line_heigh
 
-def drawSumaryEndTurn(words_and_scores) :
+
+def drawSumarryEndTurn(words_and_scores) :
 
     line_heigh = 0.6 * tile_size
-    font = pygame.font.SysFont("Calibri", floor(line_heigh))
 
-    delta_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
-    delta_y = delta + (TILE_PER_BOARD_COLUMN*tile_size)
-    delta_y = delta_x - (len(PLAYERS)*line_heigh) - 11*line_heigh - len(words_and_scores)*line_heigh
-    
+    delta_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+    delta_y = delta + 6*tile_size + 2*line_heigh + (len(PLAYERS)*line_heigh) + tile_size
+
+    id_previous_player = (id_player + len(PLAYERS) - 1) % len(PLAYERS)
+    previous_player_name = PLAYERS[id_previous_player].name
+
     if len(words_and_scores) > 0 :
-        font.set_bold(1)
-        header = font.render('Last turn actions :' ,1 ,(143,144,138) )
 
+        font = pygame.font.SysFont("Calibri", floor(1*line_heigh))
+        font.set_bold(1)
+        header = font.render('Last turn '+previous_player_name+' played :' ,1 ,(143,144,138) )
         window.blit(header, (delta_x, delta_y) )
         delta_y += 2*line_heigh
 
+        font = pygame.font.SysFont("Calibri", floor(0.9*line_heigh))        
         font.set_bold(0)
 
         for association in words_and_scores :
             if association[0] == '!! SCRABBLE !!':
-                text = font.render('  !! SCRABBLE gives 50 points !!',1,(243,112,118))
+                text = font.render('    !! SCRABBLE gives 50 points !!',1,(243,112,118))
                 window.blit(text, (delta_x, delta_y) )
                 delta_y += line_heigh
             else:
-                text = font.render('  Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,(143,144,138))
+                text = font.render('    Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,(143,144,138))
                 window.blit(text, (delta_x, delta_y) )
                 delta_y += line_heigh
     else :
-        delta_y -= line_heigh
-        font.set_bold(1)
-        header = font.render('Last turn actions :' ,1 ,(143,144,138) )
-        window.blit(header, (delta_x, delta_y) )
-        delta_y += 2*line_heigh
 
+        font = pygame.font.SysFont("Calibri", floor(0.9*line_heigh))
         font.set_bold(0)
-        text = font.render('  Nothing played',1,(143,144,138))
+        text = font.render('Nothing played by '+previous_player_name+' last turn',1,(143,144,138))
         window.blit(text, (delta_x, delta_y) )
 
 
@@ -296,7 +335,7 @@ def cursorIsOnBoard(cursor_x, cursor_y) :
         return False
 
 def cursorIsOnHand(cursor_x, cursor_y, hand) : #TO DEBUG ?? use collidepoint
-    delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+    delta_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
     delta_hand_y = delta + 2*tile_size
 
     tile_x = floor( (cursor_x - delta_hand_x)/tile_size)
@@ -307,8 +346,6 @@ def cursorIsOnHand(cursor_x, cursor_y, hand) : #TO DEBUG ?? use collidepoint
     else :
         return False
 
-def idTileFromHand(x) :
-    return (x - (2 + TILE_PER_BOARD_COLUMN + 2) )
 
 def emptySlot(x,y) :
     if board_state[x][y] == '?':
@@ -649,6 +686,9 @@ current_action = ACTIONS[0] #select a letter
 hand_at_turns_begining = current_player.hand
 board_state_at_turns_begining = board_state
 
+
+
+
 #init background for display
 drawBoard()
 drawTurnInfo(current_player)
@@ -697,7 +737,7 @@ while running:
             drawBoard()        
             drawTurnInfo(current_player)
             drawScores()
-            drawSumaryEndTurn(last_words_and_scores)
+            drawSumarryEndTurn(last_words_and_scores)
 
             background = window.copy() #save background
 
@@ -742,7 +782,7 @@ while running:
             drawBoard() #draw everything on screen         
             drawTurnInfo(current_player)
             drawScores()
-            drawSumaryEndTurn(last_words_and_scores)
+            drawSumarryEndTurn(last_words_and_scores)
 
             background = window.copy() #NEW 
 
@@ -778,7 +818,7 @@ while running:
                         drawBoard()        
                         drawTurnInfo(current_player)
                         drawScores()
-                        drawSumaryEndTurn(last_words_and_scores)
+                        drawSumarryEndTurn(last_words_and_scores)
 
                         background = window.copy() #save background
 
@@ -787,7 +827,7 @@ while running:
 
                 elif cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
 
-                    delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+                    delta_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
                     delta_hand_y = delta + 2*tile_size
 
                     tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
@@ -818,7 +858,7 @@ while running:
                         drawBoard()        
                         drawTurnInfo(current_player)
                         drawScores()
-                        drawSumaryEndTurn(last_words_and_scores)
+                        drawSumarryEndTurn(last_words_and_scores)
 
                         background = window.copy() #save background
 
@@ -843,7 +883,7 @@ while running:
                         drawBoard()        
                         drawTurnInfo(current_player)
                         drawScores()
-                        drawSumaryEndTurn(last_words_and_scores)
+                        drawSumarryEndTurn(last_words_and_scores)
 
                         background = window.copy() #save background
 
@@ -877,7 +917,7 @@ while running:
                             drawBoard()        
                             drawTurnInfo(current_player)
                             drawScores()
-                            drawSumaryEndTurn(last_words_and_scores)
+                            drawSumarryEndTurn(last_words_and_scores)
 
                             background = window.copy() #save background
 
@@ -902,7 +942,7 @@ while running:
                             drawBoard()        
                             drawTurnInfo(current_player)
                             drawScores()
-                            drawSumaryEndTurn(last_words_and_scores)
+                            drawSumarryEndTurn(last_words_and_scores)
 
                             background = window.copy() #save background
 
