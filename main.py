@@ -71,6 +71,8 @@ ACTIONS = ('SELECT_A_LETTER', 'PLAY_A_LETTER')
 PLAYERS = []
 NO_LETTER = '_'
 
+DISPLAY_NEXT_PLAYER_HAND = rules.DISPLAY_NEXT_PLAYER_HAND
+
 
 #CHANGING WITH WINDOW RESIZING
 zoom_factor = float(settings.WIDTH / 1920.0) #reference resolution is 1920*1080
@@ -240,7 +242,6 @@ def drawBoard() :
 
 #Display on top of the screen the player who is currently playing
 def drawTurnInfo(player) :
-
     line_heigh = 0.9*tile_size
 
     delta_info_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
@@ -265,7 +266,7 @@ def drawScores() :
     if(len(PLAYERS) <= 8) :
 
         delta_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-        delta_y = delta + 6*tile_size
+        delta_y = delta + 4*tile_size + 1*tile_size + 2*tile_size*int(DISPLAY_NEXT_PLAYER_HAND)
        
         line_heigh = 0.6 * tile_size
         font = pygame.font.SysFont("Calibri", floor(1.1*line_heigh))
@@ -293,7 +294,7 @@ def drawSumarryEndTurn(words_and_scores) :
     line_heigh = 0.6 * tile_size
 
     delta_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-    delta_y = delta + 6*tile_size + 2*line_heigh + (len(PLAYERS)*line_heigh) + tile_size
+    delta_y = delta + 5*tile_size + 2*line_heigh + (len(PLAYERS)*line_heigh) + tile_size + 2*tile_size*int(DISPLAY_NEXT_PLAYER_HAND)
 
     id_previous_player = (id_player + len(PLAYERS) - 1) % len(PLAYERS)
     previous_player_name = PLAYERS[id_previous_player].name
@@ -323,6 +324,31 @@ def drawSumarryEndTurn(words_and_scores) :
         font = pygame.font.SysFont("Calibri", floor(0.9*line_heigh))
         font.set_bold(0)
         text = font.render('Nothing played by '+previous_player_name+' last turn',1,(143,144,138))
+        window.blit(text, (delta_x, delta_y) )
+
+
+def drawNextPayerHand(next_player) :
+
+    if DISPLAY_NEXT_PLAYER_HAND :
+
+        line_heigh = 0.6 * tile_size
+
+        delta_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+        delta_y = delta + 4*tile_size
+
+        font = pygame.font.SysFont("Calibri", floor(1.1*line_heigh))
+        font.set_bold(1) 
+        header = font.render(next_player.name+ "'s hand :",1,(143,144,138))
+        window.blit(header, (delta_x, delta_y) )
+
+        delta_y += 2*line_heigh
+        font.set_bold(0) 
+
+        next_player_letters = "    "
+        for letter in next_player.hand :
+            next_player_letters += letter + " "
+            
+        text = font.render(next_player_letters, 1, (143,144,138))
         window.blit(text, (delta_x, delta_y) )
 
 
@@ -734,7 +760,8 @@ while running:
             for key in tiles.keys() :
                 tiles[key] = pygame.transform.smoothscale(tiles[key], (tile_size, tile_size) )
 
-            drawBoard()        
+            drawBoard()
+            drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
             drawTurnInfo(current_player)
             drawScores()
             drawSumarryEndTurn(last_words_and_scores)
@@ -765,6 +792,11 @@ while running:
                 else :
                     id_letter += 1
 
+            while len(current_player.hand) < LETTERS_PER_HAND and len(BAG_OF_LETTERS) > 1 :
+                random_int = randint(0,len(bag_of_letters)-1)
+                current_player.hand.append(bag_of_letters[random_int])
+                del(bag_of_letters[random_int])
+
             #NEXT PLAYER
             id_player = (id_player + 1) % len(PLAYERS)
             current_player = PLAYERS[id_player]
@@ -773,13 +805,15 @@ while running:
 
             hand_at_turns_begining = current_player.hand
             board_state_at_turns_begining = board_state
-
+            '''
             while len(current_player.hand) < LETTERS_PER_HAND and len(BAG_OF_LETTERS) > 1 :
                 random_int = randint(0,len(bag_of_letters)-1)
                 current_player.hand.append(bag_of_letters[random_int])
                 del(bag_of_letters[random_int])
+            '''
 
-            drawBoard() #draw everything on screen         
+            drawBoard()
+            drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])         
             drawTurnInfo(current_player)
             drawScores()
             drawSumarryEndTurn(last_words_and_scores)
@@ -815,7 +849,8 @@ while running:
                         board_state[tile_x_board][tile_y_board] = '?'
                         current_action = ACTIONS[1] #next action : play a letter
 
-                        drawBoard()        
+                        drawBoard()
+                        drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
                         drawTurnInfo(current_player)
                         drawScores()
                         drawSumarryEndTurn(last_words_and_scores)
@@ -855,7 +890,8 @@ while running:
 
                         board_state[tile_x_board][tile_y_board] = selected_letter
 
-                        drawBoard()        
+                        drawBoard()
+                        drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
                         drawTurnInfo(current_player)
                         drawScores()
                         drawSumarryEndTurn(last_words_and_scores)
@@ -871,7 +907,7 @@ while running:
 
                 elif cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
 
-                    delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+                    delta_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
                     tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
 
                     underneath_letter = current_player.hand[tile_x_hand]
@@ -880,7 +916,8 @@ while running:
 
                         current_player.hand[tile_x_hand] = selected_letter
 
-                        drawBoard()        
+                        drawBoard() 
+                        drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])       
                         drawTurnInfo(current_player)
                         drawScores()
                         drawSumarryEndTurn(last_words_and_scores)
@@ -914,7 +951,8 @@ while running:
 
                             board_state[tile_x_board][tile_y_board] = selected_letter
 
-                            drawBoard()        
+                            drawBoard()
+                            drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
                             drawTurnInfo(current_player)
                             drawScores()
                             drawSumarryEndTurn(last_words_and_scores)
@@ -930,7 +968,7 @@ while running:
 
                     elif cursorIsOnHand(cursor_x, cursor_y, current_player.hand) :
 
-                        delta_hand_x = 2*delta + TILE_PER_BOARD_COLUMN*tile_size + 2*tile_size
+                        delta_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
                         tile_x_hand = floor( (cursor_x - delta_hand_x)/tile_size)
 
                         underneath_letter = current_player.hand[tile_x_hand]
@@ -939,7 +977,8 @@ while running:
 
                             current_player.hand[tile_x_hand] = selected_letter #ADDED
 
-                            drawBoard()        
+                            drawBoard()
+                            drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
                             drawTurnInfo(current_player)
                             drawScores()
                             drawSumarryEndTurn(last_words_and_scores)
