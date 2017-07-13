@@ -114,7 +114,7 @@ hand_at_turns_begining = []
 print ('    Loading images...')
 
 #TILES
-path_for_tiles = './images/tiles/tile_'
+path_for_tiles = './images/tiles/'
 tiles = {
     'start' : pygame.image.load(path_for_tiles+'start.png'),
     'empty' : pygame.image.load(path_for_tiles+'empty.png'),
@@ -125,9 +125,9 @@ tiles = {
 }
 
 #LETTERS
-path_for_letters = './images/letters/'+LANGUAGE+'/letter_'
+path_for_letters = './images/letters/'+LANGUAGE+'/'
 letters = {
-'*' : pygame.image.load(path_for_letters+'_joker.png'),
+'*' : pygame.image.load(path_for_letters+'joker.png'),
 'A' : pygame.image.load(path_for_letters+'A.png'),
 'B' : pygame.image.load(path_for_letters+'B.png'),
 'C' : pygame.image.load(path_for_letters+'C.png'),
@@ -157,8 +157,8 @@ letters = {
 }
 
 #BUTTONS
-path_for_buttons = './images/buttons/button_'
-button_done = path_for_buttons+'done.png'
+path_for_buttons = './images/buttons/'
+button_end_turn = path_for_buttons+'end_turn.png'
 
 board = pygame.image.load('./images/board.png')
 menu = pygame.image.load('./images/menu.png')
@@ -629,7 +629,7 @@ def reloadTiles() :
 
 def reloadLetters() :
     return {
-            '*' : pygame.image.load(path_for_letters+'_joker.png'),
+            '*' : pygame.image.load(path_for_letters+'joker.png'),
             'A' : pygame.image.load(path_for_letters+'A.png'),
             'B' : pygame.image.load(path_for_letters+'B.png'),
             'C' : pygame.image.load(path_for_letters+'C.png'),
