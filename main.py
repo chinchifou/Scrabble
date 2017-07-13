@@ -13,31 +13,31 @@ from math import floor
 
 from random import randint
 
-''' TODO
+
 #___GUI INITIALISATION___
 #Font
-line_heigh = 06*tile_size
+gui_title_line_heigh = 0.0
+gui_line_heigh = 0.0
 
 #TURN INFO
+gui_turn_info_x = 0.0
+gui_turn_info_y = 0.0
 
-TURN_INFO_X = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-TURN_INFO_Y = 1.3*delta
+#PLAYER HAND
+gui_hand_x = 0.0
+gui_hand_y = 0.0
 
-#TILES IN PLAYER HAND
-
-HAND_X = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-HAND_Y = delta + 2*tile_size
+#NEXT PLAYER HAND
+gui_next_hand_x = 0.0
+gui_next_hand_y = 0.0
 
 #SCORES
-
-SCORE_X= 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-SCORE_Y = delta + 6*tile_size
+gui_score_x = 0.0
+gui_score_y = 0.0
 
 #PREVIOUS TURN SUMMARY
-
-TURN_SUMMARY_X = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-TUEN_SUMMARY_Y = delta + 7*tile_size + 2*line_heigh + (len(PLAYERS)*line_heigh) + tile_size
-'''
+gui_turn_summary_x = 0.0
+gui_turn_summary_y = 0.0
 
 #___INITIALIZATION___
 
@@ -114,7 +114,7 @@ hand_at_turns_begining = []
 print ('    Loading images...')
 
 #TILES
-path_for_tiles = './images/tiles/tile_'# TODO change path for Linux ?
+path_for_tiles = './images/tiles/tile_'
 tiles = {
     'start' : pygame.image.load(path_for_tiles+'start.png'),
     'empty' : pygame.image.load(path_for_tiles+'empty.png'),
@@ -155,6 +155,10 @@ letters = {
 'Y' : pygame.image.load(path_for_letters+'Y.png'),
 'Z' : pygame.image.load(path_for_letters+'Z.png')
 }
+
+#BUTTONS
+path_for_buttons = './images/buttons/button_'
+button_done = path_for_buttons+'done.png'
 
 board = pygame.image.load('./images/board.png')
 menu = pygame.image.load('./images/menu.png')
@@ -231,6 +235,8 @@ def drawBoard() :
             x_pos += tile_size
         x_pos = 0 + delta
         y_pos += tile_size
+
+    #TODO : split to improve perf
     #letters on board
     for row in range(0,TILE_PER_BOARD_COLUMN) :
         for column in range(0, TILE_PER_BOARD_COLUMN) :
@@ -242,41 +248,33 @@ def drawBoard() :
 
 #Display on top of the screen the player who is currently playing
 def drawTurnInfo(player) :
-    line_heigh = 0.9*tile_size
-
-    delta_info_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-    delta_info_y = 1.3*delta
-
-    font = pygame.font.SysFont("Calibri", floor(line_heigh))
+    #TO DO general font
+    font = pygame.font.SysFont("Calibri", floor(gui_title_line_heigh))
     font.set_bold(1)
     test_text = font.render(player.name+"'s turn",1,(143,144,138))
-    window.blit(test_text,(delta_info_x, delta_info_y))
+    window.blit(test_text,(gui_turn_info_x, gui_turn_info_y))
 
 
 def drawHand(hand) :
-    delta_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-    delta_hand_y = delta + 2*tile_size
-
     for id_letter in range(len(hand)) :
         if hand[id_letter] != NO_LETTER : #ADDED
-            window.blit(letters[hand[id_letter]], (delta_hand_x + id_letter*tile_size , delta_hand_y)) 
+            window.blit(letters[hand[id_letter]], (gui_hand_x + id_letter*tile_size , gui_hand_y)) 
 
 
 def drawScores() :
     if(len(PLAYERS) <= 8) :
 
-        delta_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-        delta_y = delta + 4*tile_size + 1*tile_size + 2*tile_size*int(DISPLAY_NEXT_PLAYER_HAND)
+        delta_y = gui_score_y
        
-        line_heigh = 0.6 * tile_size
-        font = pygame.font.SysFont("Calibri", floor(1.1*line_heigh))
+        #TODO : general font for title
+        font = pygame.font.SysFont("Calibri", floor(1.1*gui_line_heigh))
         font.set_bold(1) 
         header = font.render('Scores :',1,(143,144,138))
 
-        font = pygame.font.SysFont("Calibri", floor(0.9*line_heigh))
+        font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))
         font.set_bold(0)
-        window.blit(header, (delta_x, delta_y) )
-        delta_y += 2*line_heigh
+        window.blit(header, (gui_score_x, delta_y) )
+        delta_y += 2*gui_line_heigh
 
         for player in PLAYERS :
             if player == current_player :
@@ -285,63 +283,57 @@ def drawScores() :
             else :
                 font.set_bold(0)
                 player_score_text = font.render('    '+player.name+" : "+str(player.points),1,(143,144,138))
-            window.blit(player_score_text, (delta_x, delta_y) )
-            delta_y += line_heigh
+            window.blit(player_score_text, (gui_score_x, delta_y) )
+            delta_y += gui_line_heigh
 
 
 def drawSumarryEndTurn(words_and_scores) :
 
-    line_heigh = 0.6 * tile_size
-
-    delta_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-    delta_y = delta + 5*tile_size + 2*line_heigh + (len(PLAYERS)*line_heigh) + tile_size + 2*tile_size*int(DISPLAY_NEXT_PLAYER_HAND)
+    delta_y = gui_turn_summary_y
 
     id_previous_player = (id_player + len(PLAYERS) - 1) % len(PLAYERS)
     previous_player_name = PLAYERS[id_previous_player].name
 
     if len(words_and_scores) > 0 :
 
-        font = pygame.font.SysFont("Calibri", floor(1*line_heigh))
+        font = pygame.font.SysFont("Calibri", floor(1*gui_line_heigh))
         font.set_bold(1)
         header = font.render('Last turn '+previous_player_name+' played :' ,1 ,(143,144,138) )
-        window.blit(header, (delta_x, delta_y) )
-        delta_y += 2*line_heigh
+        window.blit(header, (gui_turn_summary_x, delta_y) )
+        delta_y += 2*gui_line_heigh
 
-        font = pygame.font.SysFont("Calibri", floor(0.9*line_heigh))        
+        font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))        
         font.set_bold(0)
 
         for association in words_and_scores :
             if association[0] == '!! SCRABBLE !!':
                 text = font.render('    !! SCRABBLE gives 50 points !!',1,(243,112,118))
-                window.blit(text, (delta_x, delta_y) )
-                delta_y += line_heigh
+                window.blit(text, (gui_turn_summary_x, delta_y) )
+                delta_y += gui_line_heigh
             else:
                 text = font.render('    Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,(143,144,138))
-                window.blit(text, (delta_x, delta_y) )
-                delta_y += line_heigh
+                window.blit(text, (gui_turn_summary_x, delta_y) )
+                delta_y += gui_line_heigh
     else :
 
-        font = pygame.font.SysFont("Calibri", floor(0.9*line_heigh))
+        font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))
         font.set_bold(0)
         text = font.render('Nothing played by '+previous_player_name+' last turn',1,(143,144,138))
-        window.blit(text, (delta_x, delta_y) )
+        window.blit(text, (gui_turn_summary_x, delta_y) )
 
 
 def drawNextPayerHand(next_player) :
 
     if DISPLAY_NEXT_PLAYER_HAND :
 
-        line_heigh = 0.6 * tile_size
+        delta_y = gui_next_hand_y
 
-        delta_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
-        delta_y = delta + 4*tile_size
-
-        font = pygame.font.SysFont("Calibri", floor(1.1*line_heigh))
+        font = pygame.font.SysFont("Calibri", floor(1.1*gui_line_heigh))
         font.set_bold(1) 
         header = font.render(next_player.name+ "'s hand :",1,(143,144,138))
-        window.blit(header, (delta_x, delta_y) )
+        window.blit(header, (gui_next_hand_x, delta_y) )
 
-        delta_y += 2*line_heigh
+        delta_y += 2*gui_line_heigh
         font.set_bold(0) 
 
         next_player_letters = "    "
@@ -349,7 +341,7 @@ def drawNextPayerHand(next_player) :
             next_player_letters += letter + " "
             
         text = font.render(next_player_letters, 1, (143,144,138))
-        window.blit(text, (delta_x, delta_y) )
+        window.blit(text, (gui_next_hand_x, delta_y) )
 
 
 def cursorIsOnBoard(cursor_x, cursor_y) :
@@ -742,13 +734,38 @@ while running:
             board = reloardBoard() 
             menu = reloadMenu() 
 
-            #UPDATE VALUE OF VARIABLES
+            #___UPDATE VALUE OF VARIABLES___
             zoom_factor = updateZoomFactor(event.dict['size'][0], event.dict['size'][1])
             tile_size = updateTileSize()
             delta = updateDelta()
             board_size = updateBoardSize()
             menu_width = updateMenuWidth()
             menu_heigh = updateMenuHeigh()
+
+            #GUI UPDATE
+            #Font TODO to improve
+            gui_title_line_heigh = 0.9*tile_size
+            gui_line_heigh = 0.6*tile_size
+
+            #turn info
+            gui_turn_info_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+            gui_turn_info_y = 1.3*delta
+
+            #player hand
+            gui_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+            gui_hand_y = delta + 2*tile_size
+
+            #next player hand
+            gui_next_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+            gui_next_hand_y = delta + 4*tile_size
+
+            #scores
+            gui_score_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+            gui_score_y = delta + 4*tile_size + 1*tile_size + 2*tile_size*int(DISPLAY_NEXT_PLAYER_HAND)
+
+            #previous turn summary
+            gui_turn_summary_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
+            gui_turn_summary_y = delta + 5*tile_size + 2*gui_line_heigh + (len(PLAYERS)*gui_line_heigh) + tile_size + 2*tile_size*int(DISPLAY_NEXT_PLAYER_HAND)
 
             #RESIZE ASSETS            
             board = pygame.transform.smoothscale( board, (board_size, board_size) )
