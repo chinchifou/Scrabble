@@ -39,6 +39,7 @@ gui_score_y = 0.0
 gui_turn_summary_x = 0.0
 gui_turn_summary_y = 0.0
 
+
 #___INITIALIZATION___
 
 #launch Pygame
@@ -300,26 +301,32 @@ def drawSumarryEndTurn(words_and_scores) :
         font.set_bold(1)
         header = font.render('Last turn '+previous_player_name+' played :' ,1 ,(143,144,138) )
         window.blit(header, (gui_turn_summary_x, delta_y) )
-        delta_y += 2*gui_line_heigh
+        delta_y += gui_line_heigh
 
         font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))        
         font.set_bold(0)
 
         for association in words_and_scores :
             if association[0] == '!! SCRABBLE !!':
+                delta_y += gui_line_heigh
                 text = font.render('    !! SCRABBLE gives 50 points !!',1,(243,112,118))
                 window.blit(text, (gui_turn_summary_x, delta_y) )
-                delta_y += gui_line_heigh
+
             else:
+                delta_y += gui_line_heigh
                 text = font.render('    Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,(143,144,138))
                 window.blit(text, (gui_turn_summary_x, delta_y) )
-                delta_y += gui_line_heigh
+
     else :
 
         font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))
         font.set_bold(0)
         text = font.render('Nothing played by '+previous_player_name+' last turn',1,(143,144,138))
         window.blit(text, (gui_turn_summary_x, delta_y) )
+
+    delta_y += 2*gui_line_heigh
+    text = font.render('Remaining tiles in bag : '+str(len(BAG_OF_LETTERS)), 1 ,(143,144,138) )
+    window.blit(text, (gui_turn_summary_x, delta_y))
 
 
 def drawNextPayerHand(next_player) :
@@ -809,7 +816,7 @@ while running:
                 else :
                     id_letter += 1
 
-            while len(current_player.hand) < LETTERS_PER_HAND and len(BAG_OF_LETTERS) > 1 :
+            while len(current_player.hand) < LETTERS_PER_HAND and len(BAG_OF_LETTERS) > 0 :
                 random_int = randint(0,len(bag_of_letters)-1)
                 current_player.hand.append(bag_of_letters[random_int])
                 del(bag_of_letters[random_int])
@@ -838,6 +845,7 @@ while running:
             background = window.copy() #NEW 
 
             drawHand(current_player.hand)
+            
 
             pygame.display.flip()
 
@@ -870,7 +878,7 @@ while running:
                         drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
                         drawTurnInfo(current_player)
                         drawScores()
-                        drawSumarryEndTurn(last_words_and_scores)
+                        drawSumarryEndTurn(last_words_and_scores)    
 
                         background = window.copy() #save background
 
@@ -912,7 +920,7 @@ while running:
                         drawTurnInfo(current_player)
                         drawScores()
                         drawSumarryEndTurn(last_words_and_scores)
-
+                        
                         background = window.copy() #save background
 
                         drawHand(current_player.hand)
@@ -938,7 +946,7 @@ while running:
                         drawTurnInfo(current_player)
                         drawScores()
                         drawSumarryEndTurn(last_words_and_scores)
-
+                        
                         background = window.copy() #save background
 
                         drawHand(current_player.hand)
@@ -973,7 +981,7 @@ while running:
                             drawTurnInfo(current_player)
                             drawScores()
                             drawSumarryEndTurn(last_words_and_scores)
-
+                            
                             background = window.copy() #save background
 
                             drawHand(current_player.hand)
