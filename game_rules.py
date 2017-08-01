@@ -1,13 +1,16 @@
 #CONFIGURATION FILE
 #GAME RULE
 
+
+
 #___BASIC OPTIONS___
 
 LANGUAGE = 'french' #choose your language set among 'french' or 'english' ('english' if non given)
 
-#PLAYERS_NAME = ['Poupidou', 'Benoit']
-PLAYERS_NAME = ['Benoit','Nicole']
+#PLAYERS_NAME = ['PoupiPoupette', 'Benoit']
+PLAYERS_NAME = ['Nicole','Benoit']
 #PLAYERS_NAME = ['Nicole']
+
 
 
 #___ADVANCED OPTIONS___

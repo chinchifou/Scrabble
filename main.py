@@ -1,5 +1,4 @@
 #___IMPORTS___
-
 import pygame
 from pygame.locals import *
 
@@ -41,11 +40,9 @@ gui_turn_summary_y = 0.0
 
 
 #___INITIALIZATION___
-
 #launch Pygame
 pygame.init()
-running = True
-print ('Game is running')
+print('PyGame initialization OK')
 
 if RESOLUTION_AUTO :
     monitor_resolution = pygame.display.Info()
@@ -74,6 +71,8 @@ NO_LETTER = '_'
 
 DISPLAY_NEXT_PLAYER_HAND = rules.DISPLAY_NEXT_PLAYER_HAND
 
+color_light_grey = (143,144,138)
+color_red = (243,112,118)
 
 #CHANGING WITH WINDOW RESIZING
 zoom_factor = float(settings.WIDTH / 1920.0) #reference resolution is 1920*1080
@@ -111,7 +110,6 @@ board_state_at_turns_begining = board_state
 hand_at_turns_begining = []
 
 #___IMAGES LOADING___
-
 print ('    Loading images...')
 
 #TILES
@@ -157,12 +155,15 @@ letters = {
 'Z' : pygame.image.load(path_for_letters+'Z.png')
 }
 
-#BUTTONS
-path_for_buttons = './images/buttons/'
-button_end_turn = path_for_buttons+'end_turn.png'
+#BACKGROUND IMAGES
+path_for_back_images = './images/background/'
+board = pygame.image.load(path_for_back_images+'board.png')
+menu = pygame.image.load(path_for_back_images+'menu.png')
+hand_holder = pygame.image.load(path_for_back_images+'hand_holder.png')
 
-board = pygame.image.load('./images/board.png')
-menu = pygame.image.load('./images/menu.png')
+#BUTTONS
+#path_for_buttons = './images/buttons/'
+#button_end_turn = path_for_buttons+'end_turn.png'
 
 print('    Images loaded')
 
@@ -252,7 +253,7 @@ def drawTurnInfo(player) :
     #TO DO general font
     font = pygame.font.SysFont("Calibri", floor(gui_title_line_heigh))
     font.set_bold(1)
-    test_text = font.render(player.name+"'s turn",1,(143,144,138))
+    test_text = font.render(player.name+"'s turn",1,color_light_grey)
     window.blit(test_text,(gui_turn_info_x, gui_turn_info_y))
 
 
@@ -270,7 +271,7 @@ def drawScores() :
         #TODO : general font for title
         font = pygame.font.SysFont("Calibri", floor(1.1*gui_line_heigh))
         font.set_bold(1) 
-        header = font.render('Scores :',1,(143,144,138))
+        header = font.render('Scores :',1,color_light_grey)
 
         font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))
         font.set_bold(0)
@@ -280,10 +281,10 @@ def drawScores() :
         for player in PLAYERS :
             if player == current_player :
                 font.set_bold(1)
-                player_score_text = font.render('   '+player.name+" : "+str(player.points),1,(143,144,138))
+                player_score_text = font.render('   '+player.name+" : "+str(player.points),1,color_light_grey)
             else :
                 font.set_bold(0)
-                player_score_text = font.render('    '+player.name+" : "+str(player.points),1,(143,144,138))
+                player_score_text = font.render('    '+player.name+" : "+str(player.points),1,color_light_grey)
             window.blit(player_score_text, (gui_score_x, delta_y) )
             delta_y += gui_line_heigh
 
@@ -299,7 +300,7 @@ def drawSumarryEndTurn(words_and_scores) :
 
         font = pygame.font.SysFont("Calibri", floor(1*gui_line_heigh))
         font.set_bold(1)
-        header = font.render('Last turn '+previous_player_name+' played :' ,1 ,(143,144,138) )
+        header = font.render('Last turn '+previous_player_name+' played :' ,1 ,color_light_grey )
         window.blit(header, (gui_turn_summary_x, delta_y) )
         delta_y += gui_line_heigh
 
@@ -314,18 +315,18 @@ def drawSumarryEndTurn(words_and_scores) :
 
             else:
                 delta_y += gui_line_heigh
-                text = font.render('    Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,(143,144,138))
+                text = font.render('    Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,color_light_grey)
                 window.blit(text, (gui_turn_summary_x, delta_y) )
 
     else :
 
         font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))
         font.set_bold(0)
-        text = font.render('Nothing played by '+previous_player_name+' last turn',1,(143,144,138))
+        text = font.render('Nothing played by '+previous_player_name+' last turn',1,color_light_grey)
         window.blit(text, (gui_turn_summary_x, delta_y) )
 
     delta_y += 2*gui_line_heigh
-    text = font.render('Remaining tiles in bag : '+str(len(BAG_OF_LETTERS)), 1 ,(143,144,138) )
+    text = font.render('Remaining tiles in bag : '+str(len(BAG_OF_LETTERS)), 1 ,color_light_grey )
     window.blit(text, (gui_turn_summary_x, delta_y))
 
 
@@ -337,7 +338,7 @@ def drawNextPayerHand(next_player) :
 
         font = pygame.font.SysFont("Calibri", floor(1.1*gui_line_heigh))
         font.set_bold(1) 
-        header = font.render(next_player.name+ "'s hand :",1,(143,144,138))
+        header = font.render(next_player.name+ "'s hand :",1,color_light_grey)
         window.blit(header, (gui_next_hand_x, delta_y) )
 
         delta_y += 2*gui_line_heigh
@@ -347,7 +348,7 @@ def drawNextPayerHand(next_player) :
         for letter in next_player.hand :
             next_player_letters += letter + " "
             
-        text = font.render(next_player_letters, 1, (143,144,138))
+        text = font.render(next_player_letters, 1, color_light_grey)
         window.blit(text, (gui_next_hand_x, delta_y) )
 
 
@@ -358,6 +359,7 @@ def cursorIsOnBoard(cursor_x, cursor_y) :
         return True
     else :
         return False
+
 
 def cursorIsOnHand(cursor_x, cursor_y, hand) : #TO DEBUG ?? use collidepoint
     delta_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
@@ -665,11 +667,11 @@ def reloadLetters() :
             'Z' : pygame.image.load(path_for_letters+'Z.png')
             }
 
-def reloardBoard() :
-    return pygame.image.load('./images/board.png') 
+def reloadBoard() :
+    return pygame.image.load('./images/background/board.png') 
 
 def reloadMenu() :
-    return pygame.image.load('./images/menu.png')
+    return pygame.image.load('./images/background/menu.png')
 
 
 #UPDATES DUE TO WINDOW RESIZING
@@ -711,14 +713,14 @@ current_action = ACTIONS[0] #select a letter
 hand_at_turns_begining = current_player.hand
 board_state_at_turns_begining = board_state
 
-
-
-
 #init background for display
 drawBoard()
 drawTurnInfo(current_player)
 drawScores()
 background = window.copy()
+
+running = True
+print ('Game is running')
 
 #___MAIN  GAME LOOP___
 
@@ -738,7 +740,7 @@ while running:
             #load again all images to gain quality in case of a zoom in after a zoom out
             letters = reloadLetters()
             tiles = reloadTiles()
-            board = reloardBoard() 
+            board = reloadBoard() 
             menu = reloadMenu() 
 
             #___UPDATE VALUE OF VARIABLES___
