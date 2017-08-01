@@ -22,6 +22,10 @@ gui_line_heigh = 0.0
 gui_turn_info_x = 0.0
 gui_turn_info_y = 0.0
 
+#HAND HOLDER
+gui_hand_holder_x = 0.0
+gui_hand_holder_y = 0.0
+
 #PLAYER HAND
 gui_hand_x = 0.0
 gui_hand_y = 0.0
@@ -64,6 +68,9 @@ BOARD_SIZE_IN_TILES = 18
 MENU_WIDTH_IN_TILES = WIDTH_SCREEN_IN_TILES - BOARD_SIZE_IN_TILES
 MENU_HEIGH_IN_TILES = HEIGH_SCREEN_IN_TILES
 
+HAND_HOLDER_WIDTH_IN_TILES = LETTERS_PER_HAND + 0.2
+HAND_HOLDER_HEIGH_IN_TILES = 1.2
+
 ACTIONS = ('SELECT_A_LETTER', 'PLAY_A_LETTER')
 
 PLAYERS = []
@@ -85,6 +92,9 @@ delta = 1.5 * tile_size #distance of board from top left corner
 board_size = round(BOARD_SIZE_IN_TILES * tile_size)
 menu_width = round(MENU_WIDTH_IN_TILES * tile_size)
 menu_heigh = round(MENU_HEIGH_IN_TILES * tile_size)
+
+hand_holder_width = round(HAND_HOLDER_WIDTH_IN_TILES * tile_size)
+hand_holder_heigh = round(HAND_HOLDER_HEIGH_IN_TILES * tile_size)
 
 
 #CHANGING DURING THE GAME
@@ -185,7 +195,8 @@ class Player :
 
 #___FUNCTIONS___
 
-#___Game window creation___
+#LOGICAL FUNCTIONS
+#Game window creation
 def refreshWindow(window, width, heigh) :
     if settings.FULLSCREEN :
         if settings.DOUBLEBUF :
@@ -209,149 +220,6 @@ def refreshWindow(window, width, heigh) :
     return window
 
 
-#___DRAW FUNCTIONS___
-#Draw playing board
-def drawBoard() :
-    x_pos = 0 + delta
-    y_pos = 0 + delta
-
-    #DRAW BOARD + TILES + LETTERS
-    #board borders
-    window.blit(board, (0, 0))
-
-    #tiles
-    for row in range(0,TILE_PER_BOARD_COLUMN) :
-        for column in range(0, TILE_PER_BOARD_COLUMN) :
-            if LAYOUT[row][column] == 0 :
-                window.blit(tiles['start'],(x_pos, y_pos))
-            elif LAYOUT[row][column] == 1 :
-                window.blit(tiles['empty'],(x_pos, y_pos))
-            elif LAYOUT[row][column] == 2 :
-                window.blit(tiles['double_letter'],(x_pos, y_pos))
-            elif LAYOUT[row][column] == 3 :
-                window.blit(tiles['triple_letter'],(x_pos, y_pos))
-            elif LAYOUT[row][column] == 4 :
-                window.blit(tiles['double_word'],(x_pos, y_pos))
-            elif LAYOUT[row][column] == 5 :
-                window.blit(tiles['triple_word'],(x_pos, y_pos))
-            x_pos += tile_size
-        x_pos = 0 + delta
-        y_pos += tile_size
-
-    #TODO : split to improve perf
-    #letters on board
-    for row in range(0,TILE_PER_BOARD_COLUMN) :
-        for column in range(0, TILE_PER_BOARD_COLUMN) :
-            if board_state[row][column] != '?' :
-                window.blit( letters[ board_state[row][column] ], (delta + row * tile_size, delta + column * tile_size) )
-   #draw menu
-    window.blit(menu, (board_size, 0))
-
-
-#Display on top of the screen the player who is currently playing
-def drawTurnInfo(player) :
-    #TO DO general font
-    font = pygame.font.SysFont("Calibri", floor(gui_title_line_heigh))
-    font.set_bold(1)
-    test_text = font.render(player.name+"'s turn",1,color_light_grey)
-    window.blit(test_text,(gui_turn_info_x, gui_turn_info_y))
-
-
-def drawHand(hand) :
-    for id_letter in range(len(hand)) :
-        if hand[id_letter] != NO_LETTER : #ADDED
-            window.blit(letters[hand[id_letter]], (gui_hand_x + id_letter*tile_size , gui_hand_y)) 
-
-
-def drawScores() :
-    if(len(PLAYERS) <= 8) :
-
-        delta_y = gui_score_y
-       
-        #TODO : general font for title
-        font = pygame.font.SysFont("Calibri", floor(1.1*gui_line_heigh))
-        font.set_bold(1) 
-        header = font.render('Scores :',1,color_light_grey)
-
-        font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))
-        font.set_bold(0)
-        window.blit(header, (gui_score_x, delta_y) )
-        delta_y += 2*gui_line_heigh
-
-        for player in PLAYERS :
-            if player == current_player :
-                font.set_bold(1)
-                player_score_text = font.render('   '+player.name+" : "+str(player.points),1,color_light_grey)
-            else :
-                font.set_bold(0)
-                player_score_text = font.render('    '+player.name+" : "+str(player.points),1,color_light_grey)
-            window.blit(player_score_text, (gui_score_x, delta_y) )
-            delta_y += gui_line_heigh
-
-
-def drawSumarryEndTurn(words_and_scores) :
-
-    delta_y = gui_turn_summary_y
-
-    id_previous_player = (id_player + len(PLAYERS) - 1) % len(PLAYERS)
-    previous_player_name = PLAYERS[id_previous_player].name
-
-    if len(words_and_scores) > 0 :
-
-        font = pygame.font.SysFont("Calibri", floor(1*gui_line_heigh))
-        font.set_bold(1)
-        header = font.render('Last turn '+previous_player_name+' played :' ,1 ,color_light_grey )
-        window.blit(header, (gui_turn_summary_x, delta_y) )
-        delta_y += gui_line_heigh
-
-        font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))        
-        font.set_bold(0)
-
-        for association in words_and_scores :
-            if association[0] == '!! SCRABBLE !!':
-                delta_y += gui_line_heigh
-                text = font.render('    !! SCRABBLE gives 50 points !!',1,(243,112,118))
-                window.blit(text, (gui_turn_summary_x, delta_y) )
-
-            else:
-                delta_y += gui_line_heigh
-                text = font.render('    Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,color_light_grey)
-                window.blit(text, (gui_turn_summary_x, delta_y) )
-
-    else :
-
-        font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))
-        font.set_bold(0)
-        text = font.render('Nothing played by '+previous_player_name+' last turn',1,color_light_grey)
-        window.blit(text, (gui_turn_summary_x, delta_y) )
-
-    delta_y += 2*gui_line_heigh
-    text = font.render('Remaining tiles in bag : '+str(len(BAG_OF_LETTERS)), 1 ,color_light_grey )
-    window.blit(text, (gui_turn_summary_x, delta_y))
-
-
-def drawNextPayerHand(next_player) :
-
-    if DISPLAY_NEXT_PLAYER_HAND :
-
-        delta_y = gui_next_hand_y
-
-        font = pygame.font.SysFont("Calibri", floor(1.1*gui_line_heigh))
-        font.set_bold(1) 
-        header = font.render(next_player.name+ "'s hand :",1,color_light_grey)
-        window.blit(header, (gui_next_hand_x, delta_y) )
-
-        delta_y += 2*gui_line_heigh
-        font.set_bold(0) 
-
-        next_player_letters = "    "
-        for letter in next_player.hand :
-            next_player_letters += letter + " "
-            
-        text = font.render(next_player_letters, 1, color_light_grey)
-        window.blit(text, (gui_next_hand_x, delta_y) )
-
-
 def cursorIsOnBoard(cursor_x, cursor_y) :
     tile_x = floor( (cursor_x - delta)/tile_size)
     tile_y = floor( (cursor_y - delta)/tile_size)
@@ -359,8 +227,6 @@ def cursorIsOnBoard(cursor_x, cursor_y) :
         return True
     else :
         return False
-
-
 def cursorIsOnHand(cursor_x, cursor_y, hand) : #TO DEBUG ?? use collidepoint
     delta_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
     delta_hand_y = delta + 2*tile_size
@@ -381,7 +247,6 @@ def emptySlot(x,y) :
         return False
 
 
-#CALCULATE POINTS
 def calculatePoints(letters_played) :
     #FORMAT letters_just_played {'a' : (x, y)}
     print ('len letters played', len(letters_played))
@@ -624,7 +489,151 @@ def calculatePoints(letters_played) :
 
             return words_and_scores
 
-        
+
+#DRAW FUNCTIONS
+#Draw playing board
+def drawBoard() :
+    x_pos = 0 + delta
+    y_pos = 0 + delta
+
+    #DRAW BOARD + TILES + LETTERS
+    #board borders
+    window.blit(board, (0, 0))
+
+    #tiles
+    for row in range(0,TILE_PER_BOARD_COLUMN) :
+        for column in range(0, TILE_PER_BOARD_COLUMN) :
+            if LAYOUT[row][column] == 0 :
+                window.blit(tiles['start'],(x_pos, y_pos))
+            elif LAYOUT[row][column] == 1 :
+                window.blit(tiles['empty'],(x_pos, y_pos))
+            elif LAYOUT[row][column] == 2 :
+                window.blit(tiles['double_letter'],(x_pos, y_pos))
+            elif LAYOUT[row][column] == 3 :
+                window.blit(tiles['triple_letter'],(x_pos, y_pos))
+            elif LAYOUT[row][column] == 4 :
+                window.blit(tiles['double_word'],(x_pos, y_pos))
+            elif LAYOUT[row][column] == 5 :
+                window.blit(tiles['triple_word'],(x_pos, y_pos))
+            x_pos += tile_size
+        x_pos = 0 + delta
+        y_pos += tile_size
+
+    #TODO : split to improve perf
+    #letters on board
+    for row in range(0,TILE_PER_BOARD_COLUMN) :
+        for column in range(0, TILE_PER_BOARD_COLUMN) :
+            if board_state[row][column] != '?' :
+                window.blit( letters[ board_state[row][column] ], (delta + row * tile_size, delta + column * tile_size) )
+   #draw menu
+    window.blit(menu, (board_size, 0))
+
+
+#Display on top of the screen the player who is currently playing
+def drawTurnInfo(player) :
+    #TO DO general font
+    font = pygame.font.SysFont("Calibri", floor(gui_title_line_heigh))
+    font.set_bold(1)
+    test_text = font.render(player.name+"'s turn",1,color_light_grey)
+    window.blit(test_text,(gui_turn_info_x, gui_turn_info_y))
+
+
+def drawHandHolder():
+    window.blit(hand_holder, (gui_hand_holder_x, gui_hand_holder_y))
+
+
+def drawHand(hand) :
+    for id_letter in range(len(hand)) :
+        if hand[id_letter] != NO_LETTER : #ADDED
+            window.blit(letters[hand[id_letter]], (gui_hand_x + id_letter*tile_size , gui_hand_y)) 
+
+
+def drawScores() :
+    if(len(PLAYERS) <= 8) :
+
+        delta_y = gui_score_y
+       
+        #TODO : general font for title
+        font = pygame.font.SysFont("Calibri", floor(1.1*gui_line_heigh))
+        font.set_bold(1) 
+        header = font.render('Scores :',1,color_light_grey)
+
+        font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))
+        font.set_bold(0)
+        window.blit(header, (gui_score_x, delta_y) )
+        delta_y += 2*gui_line_heigh
+
+        for player in PLAYERS :
+            if player == current_player :
+                font.set_bold(1)
+                player_score_text = font.render('   '+player.name+" : "+str(player.points),1,color_light_grey)
+            else :
+                font.set_bold(0)
+                player_score_text = font.render('    '+player.name+" : "+str(player.points),1,color_light_grey)
+            window.blit(player_score_text, (gui_score_x, delta_y) )
+            delta_y += gui_line_heigh
+
+
+def drawSumarryEndTurn(words_and_scores) :
+    delta_y = gui_turn_summary_y
+
+    id_previous_player = (id_player + len(PLAYERS) - 1) % len(PLAYERS)
+    previous_player_name = PLAYERS[id_previous_player].name
+
+    if len(words_and_scores) > 0 :
+
+        font = pygame.font.SysFont("Calibri", floor(1*gui_line_heigh))
+        font.set_bold(1)
+        header = font.render('Last turn '+previous_player_name+' played :' ,1 ,color_light_grey )
+        window.blit(header, (gui_turn_summary_x, delta_y) )
+        delta_y += gui_line_heigh
+
+        font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))        
+        font.set_bold(0)
+
+        for association in words_and_scores :
+            if association[0] == '!! SCRABBLE !!':
+                delta_y += gui_line_heigh
+                text = font.render('    !! SCRABBLE gives 50 points !!',1,(243,112,118))
+                window.blit(text, (gui_turn_summary_x, delta_y) )
+
+            else:
+                delta_y += gui_line_heigh
+                text = font.render('    Word '+"'"+association[0]+"'"+' for '+str(association[1])+' points',1,color_light_grey)
+                window.blit(text, (gui_turn_summary_x, delta_y) )
+
+    else :
+
+        font = pygame.font.SysFont("Calibri", floor(0.9*gui_line_heigh))
+        font.set_bold(0)
+        text = font.render('Nothing played by '+previous_player_name+' last turn',1,color_light_grey)
+        window.blit(text, (gui_turn_summary_x, delta_y) )
+
+    delta_y += 2*gui_line_heigh
+    text = font.render('Remaining tiles in bag : '+str(len(BAG_OF_LETTERS)), 1 ,color_light_grey )
+    window.blit(text, (gui_turn_summary_x, delta_y))
+
+
+def drawNextPayerHand(next_player) :
+    if DISPLAY_NEXT_PLAYER_HAND :
+
+        delta_y = gui_next_hand_y
+
+        font = pygame.font.SysFont("Calibri", floor(1.1*gui_line_heigh))
+        font.set_bold(1) 
+        header = font.render(next_player.name+ "'s hand :",1,color_light_grey)
+        window.blit(header, (gui_next_hand_x, delta_y) )
+
+        delta_y += 2*gui_line_heigh
+        font.set_bold(0) 
+
+        next_player_letters = "    "
+        for letter in next_player.hand :
+            next_player_letters += letter + " "
+            
+        text = font.render(next_player_letters, 1, color_light_grey)
+        window.blit(text, (gui_next_hand_x, delta_y) )
+
 #RELOAD IMAGES
 def reloadTiles() :
     return {
@@ -670,8 +679,13 @@ def reloadLetters() :
 def reloadBoard() :
     return pygame.image.load('./images/background/board.png') 
 
+def reloadHandHolder() :
+    return pygame.image.load('./images/background/hand_holder.png')
+
 def reloadMenu() :
     return pygame.image.load('./images/background/menu.png')
+
+
 
 
 #UPDATES DUE TO WINDOW RESIZING
@@ -687,6 +701,11 @@ def updateMenuWidth() :
     return round( MENU_WIDTH_IN_TILES * tile_size)
 def updateMenuHeigh() :
     return round( MENU_HEIGH_IN_TILES * tile_size)
+
+
+def updateHandHolder() :
+    return 
+
 
 
 
@@ -715,6 +734,7 @@ board_state_at_turns_begining = board_state
 
 #init background for display
 drawBoard()
+drawHandHolder()
 drawTurnInfo(current_player)
 drawScores()
 background = window.copy()
@@ -741,7 +761,8 @@ while running:
             letters = reloadLetters()
             tiles = reloadTiles()
             board = reloadBoard() 
-            menu = reloadMenu() 
+            menu = reloadMenu()
+            hand_holder = reloadHandHolder() 
 
             #___UPDATE VALUE OF VARIABLES___
             zoom_factor = updateZoomFactor(event.dict['size'][0], event.dict['size'][1])
@@ -750,6 +771,8 @@ while running:
             board_size = updateBoardSize()
             menu_width = updateMenuWidth()
             menu_heigh = updateMenuHeigh()
+            hand_holder_width = round(HAND_HOLDER_WIDTH_IN_TILES * tile_size)
+            hand_holder_heigh = round(HAND_HOLDER_HEIGH_IN_TILES * tile_size)
 
             #GUI UPDATE
             #Font TODO to improve
@@ -763,6 +786,10 @@ while running:
             #player hand
             gui_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
             gui_hand_y = delta + 2*tile_size
+
+            #hand holder
+            gui_hand_holder_x = gui_hand_x - 0.1*tile_size
+            gui_hand_holder_y = gui_hand_y - 0.1*tile_size
 
             #next player hand
             gui_next_hand_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
@@ -779,6 +806,7 @@ while running:
             #RESIZE ASSETS            
             board = pygame.transform.smoothscale( board, (board_size, board_size) )
             menu = pygame.transform.smoothscale( menu, (menu_width, menu_heigh) )
+            hand_holder = pygame.transform.smoothscale( hand_holder, (hand_holder_width, hand_holder_heigh) )
 
             for key in letters.keys() :
                 letters[key] = pygame.transform.smoothscale(letters[key], (tile_size, tile_size) )
@@ -787,6 +815,7 @@ while running:
                 tiles[key] = pygame.transform.smoothscale(tiles[key], (tile_size, tile_size) )
 
             drawBoard()
+            drawHandHolder()
             drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
             drawTurnInfo(current_player)
             drawScores()
@@ -839,6 +868,7 @@ while running:
             '''
 
             drawBoard()
+            drawHandHolder()
             drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])         
             drawTurnInfo(current_player)
             drawScores()
@@ -877,6 +907,7 @@ while running:
                         current_action = ACTIONS[1] #next action : play a letter
 
                         drawBoard()
+                        drawHandHolder()
                         drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
                         drawTurnInfo(current_player)
                         drawScores()
@@ -918,6 +949,7 @@ while running:
                         board_state[tile_x_board][tile_y_board] = selected_letter
 
                         drawBoard()
+                        drawHandHolder()
                         drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
                         drawTurnInfo(current_player)
                         drawScores()
@@ -943,7 +975,8 @@ while running:
 
                         current_player.hand[tile_x_hand] = selected_letter
 
-                        drawBoard() 
+                        drawBoard()
+                        drawHandHolder() 
                         drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])       
                         drawTurnInfo(current_player)
                         drawScores()
@@ -979,6 +1012,7 @@ while running:
                             board_state[tile_x_board][tile_y_board] = selected_letter
 
                             drawBoard()
+                            drawHandHolder()
                             drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
                             drawTurnInfo(current_player)
                             drawScores()
@@ -1005,6 +1039,7 @@ while running:
                             current_player.hand[tile_x_hand] = selected_letter #ADDED
 
                             drawBoard()
+                            drawHandHolder()
                             drawNextPayerHand(PLAYERS[(id_player + 1) % len(PLAYERS)])        
                             drawTurnInfo(current_player)
                             drawScores()
