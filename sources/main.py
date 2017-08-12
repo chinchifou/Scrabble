@@ -13,6 +13,7 @@ from math import floor
 from random import randint
 import random
 
+import os
 
 #___GUI INITIALISATION___
 #Font
@@ -125,53 +126,54 @@ hand_at_turns_begining = []
 print ('    Loading images...')
 
 #TILES
-path_for_tiles = './images/tiles/'
+path_for_tiles = os.path.abspath('../assets/images/tiles/')
 tiles = {
-    'start' : pygame.image.load(path_for_tiles+'start.png'),
-    'empty' : pygame.image.load(path_for_tiles+'empty.png'),
-    'double_letter' : pygame.image.load(path_for_tiles+'double_letter.png'),
-    'triple_letter' : pygame.image.load(path_for_tiles+'triple_letter.png'),
-    'double_word' : pygame.image.load(path_for_tiles+'double_word.png'),
-    'triple_word' : pygame.image.load(path_for_tiles+'triple_word.png')
+    'start' : pygame.image.load(os.path.join(path_for_tiles,'start.png')),
+    'empty' : pygame.image.load(os.path.join(path_for_tiles,'empty.png')),
+    'double_letter' : pygame.image.load(os.path.join(path_for_tiles,'double_letter.png')),
+    'triple_letter' : pygame.image.load(os.path.join(path_for_tiles,'triple_letter.png')),
+    'double_word' : pygame.image.load(os.path.join(path_for_tiles,'double_word.png')),
+    'triple_word' : pygame.image.load(os.path.join(path_for_tiles,'triple_word.png'))
 }
 
 #LETTERS
-path_for_letters = './images/letters/'+LANGUAGE+'/'
+path_for_letters = os.path.abspath('../assets/images/letters/')
+path_for_letters = os.path.join(path_for_letters, LANGUAGE)
 letters = {
-'*' : pygame.image.load(path_for_letters+'joker.png'),
-'A' : pygame.image.load(path_for_letters+'A.png'),
-'B' : pygame.image.load(path_for_letters+'B.png'),
-'C' : pygame.image.load(path_for_letters+'C.png'),
-'D' : pygame.image.load(path_for_letters+'D.png'),
-'E' : pygame.image.load(path_for_letters+'E.png'),
-'F' : pygame.image.load(path_for_letters+'F.png'),
-'G' : pygame.image.load(path_for_letters+'G.png'),
-'H' : pygame.image.load(path_for_letters+'H.png'),
-'I' : pygame.image.load(path_for_letters+'I.png'),
-'J' : pygame.image.load(path_for_letters+'J.png'),
-'K' : pygame.image.load(path_for_letters+'K.png'),
-'L' : pygame.image.load(path_for_letters+'L.png'),
-'M' : pygame.image.load(path_for_letters+'M.png'),
-'N' : pygame.image.load(path_for_letters+'N.png'),
-'O' : pygame.image.load(path_for_letters+'O.png'),
-'P' : pygame.image.load(path_for_letters+'P.png'),
-'Q' : pygame.image.load(path_for_letters+'Q.png'),
-'R' : pygame.image.load(path_for_letters+'R.png'),
-'S' : pygame.image.load(path_for_letters+'S.png'),
-'T' : pygame.image.load(path_for_letters+'T.png'),
-'U' : pygame.image.load(path_for_letters+'U.png'),
-'V' : pygame.image.load(path_for_letters+'V.png'),
-'W' : pygame.image.load(path_for_letters+'W.png'),
-'X' : pygame.image.load(path_for_letters+'X.png'),
-'Y' : pygame.image.load(path_for_letters+'Y.png'),
-'Z' : pygame.image.load(path_for_letters+'Z.png')
+'*' : pygame.image.load(os.path.join(path_for_letters,'joker.png')),
+'A' : pygame.image.load(os.path.join(path_for_letters,'A.png')),
+'B' : pygame.image.load(os.path.join(path_for_letters,'B.png')),
+'C' : pygame.image.load(os.path.join(path_for_letters,'C.png')),
+'D' : pygame.image.load(os.path.join(path_for_letters,'D.png')),
+'E' : pygame.image.load(os.path.join(path_for_letters,'E.png')),
+'F' : pygame.image.load(os.path.join(path_for_letters,'F.png')),
+'G' : pygame.image.load(os.path.join(path_for_letters,'G.png')),
+'H' : pygame.image.load(os.path.join(path_for_letters,'H.png')),
+'I' : pygame.image.load(os.path.join(path_for_letters,'I.png')),
+'J' : pygame.image.load(os.path.join(path_for_letters,'J.png')),
+'K' : pygame.image.load(os.path.join(path_for_letters,'K.png')),
+'L' : pygame.image.load(os.path.join(path_for_letters,'L.png')),
+'M' : pygame.image.load(os.path.join(path_for_letters,'M.png')),
+'N' : pygame.image.load(os.path.join(path_for_letters,'N.png')),
+'O' : pygame.image.load(os.path.join(path_for_letters,'O.png')),
+'P' : pygame.image.load(os.path.join(path_for_letters,'P.png')),
+'Q' : pygame.image.load(os.path.join(path_for_letters,'Q.png')),
+'R' : pygame.image.load(os.path.join(path_for_letters,'R.png')),
+'S' : pygame.image.load(os.path.join(path_for_letters,'S.png')),
+'T' : pygame.image.load(os.path.join(path_for_letters,'T.png')),
+'U' : pygame.image.load(os.path.join(path_for_letters,'U.png')),
+'V' : pygame.image.load(os.path.join(path_for_letters,'V.png')),
+'W' : pygame.image.load(os.path.join(path_for_letters,'W.png')),
+'X' : pygame.image.load(os.path.join(path_for_letters,'X.png')),
+'Y' : pygame.image.load(os.path.join(path_for_letters,'Y.png')),
+'Z' : pygame.image.load(os.path.join(path_for_letters,'Z.png'))
 }
 
 #BACKGROUND IMAGES
-path_for_back_images = './images/background/'
-board = pygame.image.load(path_for_back_images+'board.png')
-menu = pygame.image.load(path_for_back_images+'menu.png')
-hand_holder = pygame.image.load(path_for_back_images+'hand_holder.png')
+path_for_back_images = os.path.abspath('../assets/images/background/')
+board = pygame.image.load(os.path.join(path_for_back_images, 'board.png'))
+menu = pygame.image.load(os.path.join(path_for_back_images, 'menu.png'))
+hand_holder = pygame.image.load(os.path.join(path_for_back_images, 'hand_holder.png'))
 
 #BUTTONS
 #path_for_buttons = './images/buttons/'
@@ -648,53 +650,53 @@ def drawMenu(player) :
 #RELOAD IMAGES
 def reloadTiles() :
     return {
-    'start' : pygame.image.load(path_for_tiles+'start.png'),
-    'empty' : pygame.image.load(path_for_tiles+'empty.png'),
-    'double_letter' : pygame.image.load(path_for_tiles+'double_letter.png'),
-    'triple_letter' : pygame.image.load(path_for_tiles+'triple_letter.png'),
-    'double_word' : pygame.image.load(path_for_tiles+'double_word.png'),
-    'triple_word' : pygame.image.load(path_for_tiles+'triple_word.png')
-    }
+    'start' : pygame.image.load(os.path.join(path_for_tiles,'start.png')),
+    'empty' : pygame.image.load(os.path.join(path_for_tiles,'empty.png')),
+    'double_letter' : pygame.image.load(os.path.join(path_for_tiles,'double_letter.png')),
+    'triple_letter' : pygame.image.load(os.path.join(path_for_tiles,'triple_letter.png')),
+    'double_word' : pygame.image.load(os.path.join(path_for_tiles,'double_word.png')),
+    'triple_word' : pygame.image.load(os.path.join(path_for_tiles,'triple_word.png'))
+}
 
 def reloadLetters() :
     return {
-            '*' : pygame.image.load(path_for_letters+'joker.png'),
-            'A' : pygame.image.load(path_for_letters+'A.png'),
-            'B' : pygame.image.load(path_for_letters+'B.png'),
-            'C' : pygame.image.load(path_for_letters+'C.png'),
-            'D' : pygame.image.load(path_for_letters+'D.png'),
-            'E' : pygame.image.load(path_for_letters+'E.png'),
-            'F' : pygame.image.load(path_for_letters+'F.png'),
-            'G' : pygame.image.load(path_for_letters+'G.png'),
-            'H' : pygame.image.load(path_for_letters+'H.png'),
-            'I' : pygame.image.load(path_for_letters+'I.png'),
-            'J' : pygame.image.load(path_for_letters+'J.png'),
-            'K' : pygame.image.load(path_for_letters+'K.png'),
-            'L' : pygame.image.load(path_for_letters+'L.png'),
-            'M' : pygame.image.load(path_for_letters+'M.png'),
-            'N' : pygame.image.load(path_for_letters+'N.png'),
-            'O' : pygame.image.load(path_for_letters+'O.png'),
-            'P' : pygame.image.load(path_for_letters+'P.png'),
-            'Q' : pygame.image.load(path_for_letters+'Q.png'),
-            'R' : pygame.image.load(path_for_letters+'R.png'),
-            'S' : pygame.image.load(path_for_letters+'S.png'),
-            'T' : pygame.image.load(path_for_letters+'T.png'),
-            'U' : pygame.image.load(path_for_letters+'U.png'),
-            'V' : pygame.image.load(path_for_letters+'V.png'),
-            'W' : pygame.image.load(path_for_letters+'W.png'),
-            'X' : pygame.image.load(path_for_letters+'X.png'),
-            'Y' : pygame.image.load(path_for_letters+'Y.png'),
-            'Z' : pygame.image.load(path_for_letters+'Z.png')
-            }
+    '*' : pygame.image.load(os.path.join(path_for_letters,'joker.png')),
+    'A' : pygame.image.load(os.path.join(path_for_letters,'A.png')),
+    'B' : pygame.image.load(os.path.join(path_for_letters,'B.png')),
+    'C' : pygame.image.load(os.path.join(path_for_letters,'C.png')),
+    'D' : pygame.image.load(os.path.join(path_for_letters,'D.png')),
+    'E' : pygame.image.load(os.path.join(path_for_letters,'E.png')),
+    'F' : pygame.image.load(os.path.join(path_for_letters,'F.png')),
+    'G' : pygame.image.load(os.path.join(path_for_letters,'G.png')),
+    'H' : pygame.image.load(os.path.join(path_for_letters,'H.png')),
+    'I' : pygame.image.load(os.path.join(path_for_letters,'I.png')),
+    'J' : pygame.image.load(os.path.join(path_for_letters,'J.png')),
+    'K' : pygame.image.load(os.path.join(path_for_letters,'K.png')),
+    'L' : pygame.image.load(os.path.join(path_for_letters,'L.png')),
+    'M' : pygame.image.load(os.path.join(path_for_letters,'M.png')),
+    'N' : pygame.image.load(os.path.join(path_for_letters,'N.png')),
+    'O' : pygame.image.load(os.path.join(path_for_letters,'O.png')),
+    'P' : pygame.image.load(os.path.join(path_for_letters,'P.png')),
+    'Q' : pygame.image.load(os.path.join(path_for_letters,'Q.png')),
+    'R' : pygame.image.load(os.path.join(path_for_letters,'R.png')),
+    'S' : pygame.image.load(os.path.join(path_for_letters,'S.png')),
+    'T' : pygame.image.load(os.path.join(path_for_letters,'T.png')),
+    'U' : pygame.image.load(os.path.join(path_for_letters,'U.png')),
+    'V' : pygame.image.load(os.path.join(path_for_letters,'V.png')),
+    'W' : pygame.image.load(os.path.join(path_for_letters,'W.png')),
+    'X' : pygame.image.load(os.path.join(path_for_letters,'X.png')),
+    'Y' : pygame.image.load(os.path.join(path_for_letters,'Y.png')),
+    'Z' : pygame.image.load(os.path.join(path_for_letters,'Z.png'))
+    }
 
 def reloadBoard() :
-    return pygame.image.load('./images/background/board.png') 
+    return pygame.image.load(os.path.join(path_for_back_images, 'board.png')) 
 
 def reloadHandHolder() :
-    return pygame.image.load('./images/background/hand_holder.png')
+    return pygame.image.load(os.path.join(path_for_back_images, 'hand_holder.png'))
 
 def reloadMenu() :
-    return pygame.image.load('./images/background/menu.png')
+    return pygame.image.load(os.path.join(path_for_back_images, 'menu.png'))
 
 
 
