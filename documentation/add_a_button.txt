@@ -18,13 +18,13 @@ In order to add an image in the game (e.g. : "button.png") you need to :
 
 1. Place the image 'button.png' in the folder named '/images' and in the corresponding subfolder (here : /buttons)
 
-In the file 'main.py' :
+In the file 'gui.py' :
 
 2. Create and initialize six variables which represents : the (x,y) positionning of the button, its size expressed in 'TILES', its dynamical size expressed in pixels
 	code example :
 
-	button_x = 0.0
-	button_y = 0.0
+	gui_button_x = 0.0
+	gui_button_y = 0.0
 
 	BUTTON_WIDTH_IN_TILES = 4
 	BUTTON_HEIGH_IN_TILES = 2
@@ -79,8 +79,8 @@ In the file 'main.py', in the main game loop, int he block corresponding to a wi
 8. Place the asset on the screen by defining a position expressed in 'TILES' and the multiplying the result by 'tile_size' to get the final display value in pixels.
 	code example :
 
-	button_x = 3 * tile_size #3 tiles to the right from the left top corner
-	button_y = 5 * tile_size #5 tiles to the bottom from the left top corner
+	gui_button_x = 3 * tile_size #3 tiles to the right from the left top corner
+	gui_button_y = 5 * tile_size #5 tiles to the bottom from the left top corner
 
 9. Now calls the draw function anywhere you need, for instance in the main loop or in functions. Do not forget to repfresh the display by calling the appropriate pygame function !
 	code_example :
