@@ -6,7 +6,7 @@
 
 #___BASIC OPTIONS___
 
-FULLSCREEN = False #enable Fullscreen mode or not
+FULLSCREEN = True #enable Fullscreen mode or not
 
 RESIZABLE = True #enable the Window to be resizable or not
 
