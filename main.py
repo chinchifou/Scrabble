@@ -698,7 +698,6 @@ def reloadMenu() :
 
 
 
-
 #UPDATES DUE TO WINDOW RESIZING
 def updateZoomFactor(width, heigh) :
     return min( float(width / 1920), float(heigh/1080) )
@@ -712,12 +711,10 @@ def updateMenuWidth() :
     return round( MENU_WIDTH_IN_TILES * tile_size)
 def updateMenuHeigh() :
     return round( MENU_HEIGH_IN_TILES * tile_size)
-
-
-def updateHandHolder() :
-    return 
-
-
+def updateHandHolderWidth() :
+    return round(HAND_HOLDER_WIDTH_IN_TILES * tile_size)
+def updateHandHolderHeigh() :
+    return round(HAND_HOLDER_HEIGH_IN_TILES * tile_size)
 
 
 #___WINDOW INITIALIZATION___
@@ -760,7 +757,7 @@ while running:
         if ( event_type == pygame.QUIT ) : #close the game window
             running = False #exit the game        
 
-        #~~~~~~~~~~~ RESIZE ~~~~~~~~~~~
+        #~~~~~~~~~~~ WINDOW RESIZE ~~~~~~~~~~~
         elif ( event_type == VIDEORESIZE ) : #properly refresh the game window if a resize is detected
             window = refreshWindow(window, event.dict['size'][0], event.dict['size'][1])
             #load again all images to gain quality in case of a zoom in after a zoom out
@@ -770,17 +767,29 @@ while running:
             menu = reloadMenu()
             hand_holder = reloadHandHolder() 
 
-            #___UPDATE VALUE OF VARIABLES___
+            #--------- RESIZE ASSETS ---------
+
+            #update values
             zoom_factor = updateZoomFactor(event.dict['size'][0], event.dict['size'][1])
             tile_size = updateTileSize()
             delta = updateDelta()
             board_size = updateBoardSize()
             menu_width = updateMenuWidth()
             menu_heigh = updateMenuHeigh()
-            hand_holder_width = round(HAND_HOLDER_WIDTH_IN_TILES * tile_size)
-            hand_holder_heigh = round(HAND_HOLDER_HEIGH_IN_TILES * tile_size)
+            hand_holder_width = updateHandHolderWidth()
+            hand_holder_heigh = updateHandHolderHeigh()
 
-            #GUI UPDATE
+            #resize based on new values            
+            board = pygame.transform.smoothscale( board, (board_size, board_size) )
+            menu = pygame.transform.smoothscale( menu, (menu_width, menu_heigh) )
+            hand_holder = pygame.transform.smoothscale( hand_holder, (hand_holder_width, hand_holder_heigh) )
+
+            for key in letters.keys() :
+                letters[key] = pygame.transform.smoothscale(letters[key], (tile_size, tile_size) )
+            for key in tiles.keys() :
+                tiles[key] = pygame.transform.smoothscale(tiles[key], (tile_size, tile_size) )
+
+            #--------- PLACE ASSETS ON THE SCREEN ---------
             #Font TODO to improve
             gui_title_line_heigh = 0.9*tile_size
             gui_line_heigh = 0.6*tile_size
@@ -809,23 +818,11 @@ while running:
             gui_turn_summary_x = 1*delta + TILE_PER_BOARD_COLUMN*tile_size + 1*delta + 1*tile_size
             gui_turn_summary_y = delta + 5*tile_size + 2*gui_line_heigh + (len(PLAYERS)*gui_line_heigh) + tile_size + 2*tile_size*int(DISPLAY_NEXT_PLAYER_HAND)
 
-            #RESIZE ASSETS            
-            board = pygame.transform.smoothscale( board, (board_size, board_size) )
-            menu = pygame.transform.smoothscale( menu, (menu_width, menu_heigh) )
-            hand_holder = pygame.transform.smoothscale( hand_holder, (hand_holder_width, hand_holder_heigh) )
-
-            for key in letters.keys() :
-                letters[key] = pygame.transform.smoothscale(letters[key], (tile_size, tile_size) )
-
-            for key in tiles.keys() :
-                tiles[key] = pygame.transform.smoothscale(tiles[key], (tile_size, tile_size) )
 
             drawBoard()
             drawMenu(current_player)
-
             background = window.copy() #save background
 
-            drawHand(current_player.hand)
             pygame.display.flip()
 
         #~~~~~~~~~~~ KEYBOARD KEY DOWN ~~~~~~~~~~~

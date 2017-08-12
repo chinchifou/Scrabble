@@ -1,9 +1,17 @@
 #Documentation
+
 https://stackoverflow.com/
+
 https://www.pygame.org/
+
 https://www.quora.com/
+
 https://fr.wikipedia.org/
 
+
+
 #Materials
+
 http://www.verbumsapienti.co.uk/board.html
+
 https://fr.pinterest.com/

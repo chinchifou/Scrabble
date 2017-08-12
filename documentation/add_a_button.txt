@@ -1,0 +1,89 @@
+This text files explains everything you need to know to add a new image in the scrabble game (e.g. : a new button).
+
+
+
+I. GENERAL INFORMATION ABOUT THE ARCHITECTURE :
+
+To be fully resizable, all displayed assets must be a multiple of the variable "tile_size" which represent the size in pixels of scrabble tiles (by default tiles are 60px*60px).
+Each asset drawn on the screen is made of tiles but depending on the window resolution, the 'basic tile' is not always 60px*60px. In fact the basic tile size is multiplied by the new 'zoom_factor' each time the window is resized.
+'zoom_factor' is the ratio between the new current resolution and the reference resolution of 1920*1080.
+When adding new images you do not have to bother about the 'zoom_factor', you should use the use directly the 'tile_size' instead.
+Express every values in 'TILES' and then multiply the result by 'tile_size' to get the display value in pixels.
+
+
+
+II. STEP BY STEP GUIDE :
+
+In order to add an image in the game (e.g. : "button.png") you need to :
+
+1. Place the image 'button.png' in the folder named '/images' and in the corresponding subfolder (here : /buttons)
+
+In the file 'main.py' :
+
+2. Create and initialize six variables which represents : the (x,y) positionning of the button, its size expressed in 'TILES', its dynamical size expressed in pixels
+	code example :
+
+	button_x = 0.0
+	button_y = 0.0
+
+	BUTTON_WIDTH_IN_TILES = 4
+	BUTTON_HEIGH_IN_TILES = 2
+
+	button_width = 0.0
+	button_heigh = 0.0
+
+3. Load your image
+	code example :
+	button = pygame.image.load('/images/buttons/button.png')
+
+4. Create three fonctions : drawButton(), reloadButton(), updateButton()
+
+- drawButton() must draw the button on the screen
+	code example :
+
+	def drawButton():
+		window.blit(button, (button_x, button_y)) 
+
+- reloadButton() is called when the windows is resized. It prevents the image to be compressed on then scaled up again wich alter the resolution of the image. It basicaly reload the image and retruns it.
+	code example :
+
+	def reloadButton() :
+		return pygame.image.load('/images/buttons/button.png') )
+
+- updateButton() resize the asset base on the new 'tile_size'.
+	code example :
+	
+	def updateButtonWidth() :
+		return round(BUTTON_WIDTH_IN_TILES * tile_size)
+
+	def updateButtonHeigh() :
+		return round(BUTTON_HEIGH_IN_TILES * tile_size)
+
+In the file 'main.py', in the main game loop, int he block corresponding to a windows resize ( 'if ( event_type == VIDEORESIZE ) : ...')
+
+5. Reload the image from disk to maintain quality.
+	code example :
+		button = reloadButton()
+
+6. Update the values representing the size of the asset.
+	code example :
+
+	    button_width = updateButtonWidth()
+            buton_heigh = updateButtonHeigh()
+
+7. Update the size of the asset based on these values.
+	code example :
+	button = pygame.transform.smoothscale( button, (button_width, button_heigh) )
+
+
+8. Place the asset on the screen by defining a position expressed in 'TILES' and the multiplying the result by 'tile_size' to get the final display value in pixels.
+	code example :
+
+	button_x = 3 * tile_size #3 tiles to the right from the left top corner
+	button_y = 5 * tile_size #5 tiles to the bottom from the left top corner
+
+9. Now calls the draw function anywhere you need, for instance in the main loop or in functions. Do not forget to repfresh the display by calling the appropriate pygame function !
+	code_example :
+	
+	drawButton()
+	pygame.display.flip()
