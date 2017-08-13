@@ -16,6 +16,13 @@ import pygame
 #---- Launch Pygame ------
 pygame.init()
 pygame.mixer.init()
+
+path_for_icon = path.abspath('../assets/images/icon/')
+icon_image = pygame.image.load(path.join(path_for_icon,'Scrabble_launcher.ico'))
+icon = pygame.transform.scale(icon_image, (32, 32))
+pygame.display.set_icon(icon)
+pygame.display.set_caption('Scrabble')
+
 print('PyGame initialization OK')
 
 if display_settings.RESOLUTION_AUTO :
