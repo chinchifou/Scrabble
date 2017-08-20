@@ -606,8 +606,7 @@ while running:
 
                                 current_player.hand[tile_x_hand] = selected_letter #ADDED
 
-                                gui.drawHandHolder(gui.pos_params['hand_holder'][0], gui.pos_params['hand_holder'][1])
-                                gui.drawHand(current_player.hand, gui.pos_params['hand'][0], gui.pos_params['hand'][1])
+                                gui.drawMenu(current_player, last_words_and_scores, gui.pos_params)
                                 gui.background = window.copy() #save gui.background
                                 pygame.display.flip()
 

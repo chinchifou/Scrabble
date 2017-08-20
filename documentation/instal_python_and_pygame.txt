@@ -1,0 +1,5 @@
+1. Download and install python
+	On Windows : type 'python download' in the research bar of your web browser and download the latest version.
+	You can check the install by typing the command line 'python -v' in a console. If everything is fine you will get the version number of your python installation.
+2. Install pygame.
+On windows you can wether download it from the pygame website or by command line (if you have python 3.4 or later, as administrator in a console type 'pip install pygame' and that's it)  
