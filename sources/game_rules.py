@@ -7,7 +7,7 @@
 
 LANGUAGE = 'french' #choose your language set among 'french' or 'english' ('english' if non given)
 
-#PLAYERS_NAME = ['PoupiPoupette', 'Benoit']
+#PLAYERS_NAME = ['PoupiPompette', 'Poney_Fringuant']
 PLAYERS_NAME = ['Nicole','Benoit']
 #PLAYERS_NAME = ['Nicole']
 

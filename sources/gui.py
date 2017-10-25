@@ -447,7 +447,7 @@ def refreshWindow(width, heigh) :
                 else :
                     window = pygame.display.set_mode( (width, heigh), pygame.RESIZABLE | pygame.DOUBLEBUF)
             else:
-                window = pygame.display.set_mode( (width, heigh) | pygame.RESIZABLE)
+                window = pygame.display.set_mode( (width, heigh), pygame.RESIZABLE)
         else:
             window = pygame.display.set_mode( (width, heigh))
     return window
