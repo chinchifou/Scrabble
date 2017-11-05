@@ -93,10 +93,13 @@ def emptySlot(x,y) :
 
 def calculatePoints(letters_played) :
     #FORMAT letters_just_played {'a' : (x, y)}
-    print ('len letters played', len(letters_played))
+    if len(letters_played) > 1 :
+        print ('   ', len(letters_played),' letters played' )
+    else :
+        print ('   ', len(letters_played),' letter played' )  
 
     if len(letters_played) == 0 :
-        print( '  NOTHING PLAYED')
+        print( '    NOTHING PLAYED')
         return []
 
     else :
@@ -123,7 +126,6 @@ def calculatePoints(letters_played) :
             words_and_scores.append(['!! SCRABBLE !!', 50])
             
         if delta_x == 0 :
-            print('  HORIZONTAL WORD')
   
             #find first letter
             start_y = min_y
@@ -138,6 +140,7 @@ def calculatePoints(letters_played) :
             #words_and_scores = []
 
             if ( end_y > start_y ) : #prevent one letter word
+                print('    VERTICAL WORD')
                 #FIRST PASSAGE
                 #store word just created
                 new_word = ''
@@ -178,21 +181,23 @@ def calculatePoints(letters_played) :
                 if (it_x, it_y) in (letters_played) : #prevent to count already existing words
 
                     condition_1 = ( (it_x - 1) >= 0 ) and ( gui.board_state[it_x-1][it_y] != '?' )
-                    condition_2 = ( (it_x + 1) <= gui.TILE_PER_BOARD_COLUMN-1 ) and ( gui.board_state[it_x+1][it_y] != '?' )  
-                    if ( condition_1  or condition_2 ) :
-                        #print('there is another word')
-                        old_word = ''
-                        old_word_score = 0
+                    condition_2 = ( (it_x + 1) <= gui.TILE_PER_BOARD_COLUMN-1 ) and ( gui.board_state[it_x+1][it_y] != '?' ) 
 
+                    if ( condition_1  or condition_2 ) :       
+                        print('    HORIZONTAL WORD')
+                
                         while( ( (it_x - 1) >= 0) and (gui.board_state[it_x-1][it_y] != '?') ) : #go to the begining of the word
                             it_x = it_x - 1
+
+
+                        old_word = ''
+                        old_word_score = 0
+                        old_word_multiplier = 1  
 
                         while( ( (it_x) <= gui.TILE_PER_BOARD_COLUMN-1) and (gui.board_state[it_x][it_y] != '?') ) : #go to the end of the word
 
                             old_letter = gui.board_state[it_x][it_y]
                             old_word += old_letter
-
-                            old_word_multiplier = 1
 
                             if (it_x, it_y) in (letters_played) :
 
@@ -212,11 +217,12 @@ def calculatePoints(letters_played) :
 
                             else :
                                 old_word_score += game_rules.POINTS[old_letter]
-                            
+
                             it_x = it_x + 1
 
                         old_word_score = old_word_score * old_word_multiplier
                         words_and_scores.append([old_word, old_word_score])
+
 
             total_score = 0 
 
@@ -230,8 +236,6 @@ def calculatePoints(letters_played) :
 
 
         else : 
-            print('  HORIZONTAL WORD')
-
             #find first letter
             start_x = min_x
             while( ( (start_x - 1) >= 0) and (gui.board_state[start_x - 1][min_y] != '?') ) :
@@ -243,6 +247,7 @@ def calculatePoints(letters_played) :
                 end_x = end_x + 1
 
             if ( end_x > start_x ) : #prevent one letter word
+                print('    HORIZONTAL WORD')
                 #FIRST PASSAGE
                 #store word just created  
                 new_word = ''
@@ -278,26 +283,28 @@ def calculatePoints(letters_played) :
 
             #SECOND PASSAGE
             for it_x in range( start_x, end_x+1 ) :
-                #check for horizontal words
+                #check for vertical words
                 it_y = min_y
                 if (it_x, it_y) in (letters_played) : #prevent to count already existing words
 
                     condition_1 = ( (it_y - 1) >= 0 ) and ( gui.board_state[it_x][it_y-1] != '?' )
-                    condition_2 = ( (it_y + 1) <= gui.TILE_PER_BOARD_COLUMN-1 ) and ( gui.board_state[it_x][it_y+1] != '?' )  
+                    condition_2 = ( (it_y + 1) <= gui.TILE_PER_BOARD_COLUMN-1 ) and ( gui.board_state[it_x][it_y+1] != '?' ) 
+
                     if ( condition_1  or condition_2 ) :
-                        #print('there is another word')
-                        old_word = ''
-                        old_word_score = 0
+                        print('    VERTICAL WORD')
 
                         while( ( (it_y - 1) >= 0) and (gui.board_state[it_x][it_y-1] != '?') ) : #go to the begining of the word
                             it_y = it_y - 1
+
+
+                        old_word = ''
+                        old_word_score = 0
+                        old_word_multiplier = 1
 
                         while( ( (it_y) <= gui.TILE_PER_BOARD_COLUMN-1) and (gui.board_state[it_x][it_y] != '?') ) : #go to the end of the word
 
                             old_letter = gui.board_state[it_x][it_y]
                             old_word += old_letter
-
-                            old_word_multiplier = 1
 
                             if (it_x, it_y) in (letters_played) :
 
