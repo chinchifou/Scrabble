@@ -440,10 +440,10 @@ while running:
 				elif ( key_pressed == pygame.K_BACKSPACE ) :
 					gui.drawVictoryScreen()
 
-				#------ shuffle letters -------
+				#------ SHUFFLE LETTERS -------
 				elif ( key_pressed == pygame.K_s ) :
 					shuffle(current_player.hand)
-					
+
 					gui.drawBoard(gui.board_state)
 					gui.drawMenu(current_player, last_words_and_scores, gui.pos_params)
 					gui.background = window.copy()
