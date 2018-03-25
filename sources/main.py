@@ -1,8 +1,7 @@
 #~~~~~~ IMPORTS ~~~~~~
 
 #------ Standard library imports ------
-from random import randint
-from random import shuffle
+from random import randint, shuffle
 from math import floor
 
 #------ User's imports -------

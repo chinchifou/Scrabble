@@ -30,6 +30,7 @@ for i in range(12):
 	english_letters.append('E')
 for i in range(9):
 	english_letters.append('I')
+	english_letters.append('A')
 for i in range(8):
 	english_letters.append('O')
 for i in range(6):
